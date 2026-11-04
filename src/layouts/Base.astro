@@ -32,6 +32,9 @@ const NAV = [['Brisbane', 'au/brisbane'], ['Adelaide', 'au/adelaide'], ['Melbour
   <meta property="og:image" content={`${SITE}/og.png`} />
   <meta name="twitter:card" content="summary_large_image" />
   {jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+  {adsOn && <meta name="google-adsense-account" content="ca-pub-7164999486301748" />}
+  {adsOn && <link rel="preconnect" href="https://pagead2.googlesyndication.com" />}
+  {adsOn && <link rel="preconnect" href="https://googleads.g.doubleclick.net" crossorigin />}
   {adsOn && <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7164999486301748" crossorigin="anonymous"></script>}
   {ga && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga}`}></script>}
   {ga && <script is:inline define:vars={{ ga }}>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config',ga);</script>}
