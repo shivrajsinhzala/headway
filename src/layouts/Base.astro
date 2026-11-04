@@ -1,0 +1,73 @@
+---
+import '@fontsource-variable/sora/wght.css';
+import '@fontsource-variable/instrument-sans/wght.css';
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+import { SITE, inNetwork, systems } from '../lib/site.js';
+
+const { title, description, path = '', noindex = false, jsonld = [], operator = '', nav = false, ogType = 'website' } = Astro.props;
+const canonical = `${SITE}${path === '/' ? '/' : path}`;
+const fullTitle = /headway/i.test(title) ? title : `${title} | Headway`;
+const adsOn = import.meta.env.PUBLIC_ADS !== 'off';
+const ga = import.meta.env.PUBLIC_GA_ID;
+const NAV = [['Brisbane', 'au/brisbane'], ['Adelaide', 'au/adelaide'], ['Melbourne', 'au/melbourne-buses'], ['Victoria', 'au/vline-coaches'], ['Phoenix', 'us/phoenix']].filter(([, k]) => systems[k] && inNetwork(k).length);
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+  <meta name="theme-color" content="#1B3FD1" />
+  <script is:inline>document.documentElement.classList.add('js')</script>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta property="og:site_name" content="Headway" />
+  <meta property="og:type" content={ogType} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={`${SITE}/og.png`} />
+  <meta name="twitter:card" content="summary_large_image" />
+  {jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+  {adsOn && <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7164999486301748" crossorigin="anonymous"></script>}
+  {ga && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga}`}></script>}
+  {ga && <script is:inline define:vars={{ ga }}>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config',ga);</script>}
+</head>
+<body>
+  <a class="skip" href="#content">Skip to the times</a>
+  <div class="band">
+    <header class="container top">
+      <a class="brand" href="/" aria-label="Headway home"><Logo size={32} /><span>Headway</span></a>
+      {nav ? (
+        <nav class="top-nav" aria-label="Networks">{NAV.map(([name, k]) => <a href={`/${k}`}>{name}</a>)}</nav>
+      ) : (
+        <form class="top-search" action="/search" method="get" role="search">
+          <label class="visually-hidden" for="top-q">Route, stop or town</label>
+          <input id="top-q" name="q" type="search" placeholder="Route, stop or town" />
+          <button type="submit" aria-label="Search">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+          </button>
+        </form>
+      )}
+    </header>
+    <slot name="hero" />
+  </div>
+  <main id="content" class="container page"><slot /></main>
+  <slot name="after" />
+  <footer class="container foot">
+    <p>Headway is independent and not affiliated with {operator || 'any operator'}. Times are published schedules, not live vehicle positions.</p>
+    <nav aria-label="About"><a href="/about">About</a><a href="/about#sources">Sources</a><a href="/privacy">Privacy</a></nav>
+  </footer>
+  <script>
+    // A push fills the first unprocessed slot in the page, hidden or not, so a slot this screen
+    // hides (the desktop rail on a phone) has to leave the page before any push runs.
+    const w = window;
+    const slots = [...document.querySelectorAll('ins.adsbygoogle')];
+    const shown = slots.filter((ins) => { if (ins.offsetWidth > 0) return true; ins.closest('.ad')?.remove(); return false; });
+    shown.forEach(() => (w.adsbygoogle = w.adsbygoogle || []).push({}));
+  </script>
+</body>
+</html>

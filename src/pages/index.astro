@@ -1,0 +1,91 @@
+---
+import Base from '../layouts/Base.astro';
+import Ad from '../components/Ad.astro';
+import Badge from '../components/Badge.astro';
+import { SITE, pages, systems, byUrl, byDemand, weekdayRange, routeLabel, longDate, cityOf, inNetwork } from '../lib/site.js';
+import { hourLabel } from '../lib/time.js';
+
+const routes = pages.filter((p) => p.type === 'route').sort(byDemand);
+const sample = byUrl.get('/au/brisbane/route-272') || routes[0];
+const dir = sample.dirs[0];
+const week = sample.days.find((d) => d.days.includes(0)) || sample.days[0];
+const end = sample.days.find((d) => d.days.includes(6) && d.key !== week.key);
+const times = dir.first[week.key] || [];
+const startHour = times.length ? Math.floor(times[0] / 60) : 6;
+const rows = Array.from({ length: 7 }, (_, i) => {
+  const h = startHour + i;
+  const at = (list) => (list || []).filter((t) => Math.floor(t / 60) === h).map((t) => `:${String(t % 60).padStart(2, '0')}`).join(' ');
+  return { h: hourLabel(h), a: at(times), b: end ? at(dir.first[end.key]) : '' };
+});
+const sampleSys = systems[sample.key];
+const networks = Object.values(systems).filter((s) => inNetwork(s.key).length).sort((a, b) => inNetwork(b.key).length - inNetwork(a.key).length);
+const top = routes.slice(0, 10);
+const title = 'Headway: bus, tram and train timetables for Australia and Phoenix';
+const description = 'The whole day by hour at any stop, first and last times and how often each route runs, for Australia and Phoenix. From official data, with no app.';
+const ld = [
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Headway', url: `${SITE}/`, potentialAction: { '@type': 'SearchAction', target: `${SITE}/search?q={q}`, 'query-input': 'required name=q' } },
+  { '@context': 'https://schema.org', '@type': 'Organization', name: 'Headway', url: `${SITE}/`, logo: `${SITE}/favicon.svg`, email: 'zalashivraj2642003@gmail.com', founder: { '@type': 'Person', name: 'Shivrajsinh Zala', url: 'https://shivrajsinh.in' } },
+];
+---
+<Base title={title} description={description} path="/" nav jsonld={ld}>
+  <section slot="hero" class="container hero home-hero">
+    <div class="hero-text">
+      <h1>Know when your bus leaves.</h1>
+      <p class="lede">Full timetables for Australia and Phoenix, from official data, with no app.</p>
+      <form class="find" action="/search" method="get" role="search">
+        <label class="visually-hidden" for="home-q">Route, stop or town</label>
+        <input id="home-q" name="q" type="search" placeholder="Route, stop or town" />
+        <button type="submit">Find times</button>
+      </form>
+    </div>
+    <figure class="sample">
+      <a class="sample-head" href={sample.url}><Badge color={sample.color} text={sample.short} /><span>{sample.name.replace(/\s+-\s+/g, ' to ').replace(/\s+via\s+.*$/i, '')}</span></a>
+      <table class="hours">
+        <thead><tr><th scope="col">Hour</th><th scope="col">Weekdays</th>{end && <th scope="col">Sunday</th>}</tr></thead>
+        <tbody>{rows.map((r) => <tr><th scope="row">{r.h}</th><td>{r.a}</td>{end && <td>{r.b}</td>}</tr>)}</tbody>
+      </table>
+      <figcaption>A real page. {sampleSys.name} data, refreshed {longDate(sampleSys.builtOn)}.</figcaption>
+    </figure>
+  </section>
+
+  <section id="networks">
+    <h2 class="section-title">Choose your network</h2>
+    <div class="networks">
+      {networks.map((n) => <a class="network" href={n.url}><b>{n.name}</b><span>{n.area}</span></a>)}
+    </div>
+  </section>
+
+  <Ad />
+
+  <section>
+    <h2 class="section-title">Routes people look up most</h2>
+    <table class="data">
+      <thead><tr><th scope="col">Route</th><th scope="col">Runs between</th><th scope="col" class="r">First weekday</th><th scope="col" class="r">Last weekday</th></tr></thead>
+      <tbody>
+        {top.map((r) => {
+          const w = weekdayRange(r);
+          return (
+            <tr>
+              <td><Badge color={r.color} text={r.short || routeLabel(r)} href={r.url} /></td>
+              <td><a href={r.url}>{r.name.replace(/\s+-\s+/g, ' to ')}</a>, {cityOf(systems[r.key])}</td>
+              <td class="r">{w?.first || 'none'}</td><td class="r">{w?.last || 'none'}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </section>
+
+  <section slot="after" class="ink-band">
+    <div class="container ink-inner">
+      <h2>Every page answers what riders actually ask.</h2>
+      <ul>
+        <li>The whole day by hour, at the stop you choose</li>
+        <li>First bus, last bus and the gaps between</li>
+        <li>How often it runs, morning to night</li>
+        <li>Every stop, with minutes from the start</li>
+        <li>Where the times came from, and when they were checked</li>
+      </ul>
+    </div>
+  </section>
+</Base>

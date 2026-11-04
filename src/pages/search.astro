@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Search Headway" description="Find a route, stop or trip on Headway." noindex>
+  <h1 slot="hero" class="container page-title">Find your route</h1>
+  <div class="plain">
+    <p data-summary>Type a route number, stop or town in the box at the top.</p>
+    <ul class="results" data-results></ul>
+    <p><a href="/#networks">Browse by network instead</a></p>
+  </div>
+  <script>import '../scripts/search.js';</script>
+</Base>

@@ -1,0 +1,11 @@
+---
+/** The route's real path, drawn from the operator's own shape data. */
+const { shape, label, className = '' } = Astro.props;
+---
+{shape && (
+  <svg class:list={['plate', className]} viewBox="0 0 520 520" role="img" aria-label={label}>
+    <path class="plate-line" d={shape.d}></path>
+    <circle class="plate-start" cx={shape.start[0]} cy={shape.start[1]} r="13"></circle>
+    <circle class="plate-end" cx={shape.end[0]} cy={shape.end[1]} r="13"></circle>
+  </svg>
+)}

@@ -1,0 +1,82 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Ad from '../../../components/Ad.astro';
+import Badge from '../../../components/Badge.astro';
+import Crumbs from '../../../components/Crumbs.astro';
+import { systems, inNetwork, hubIndexed, byDemand, crumbsLd, tWord, weekdayRange, routeLabel, longDate, fit, modeFor, cap, place } from '../../../lib/site.js';
+
+export function getStaticPaths() {
+  return Object.values(systems).map((s) => ({ params: { cc: s.cc, system: s.slug }, props: { sys: s } }));
+}
+
+const { sys } = Astro.props;
+const word = tWord(sys);
+const routes = inNetwork(sys.key, 'route').sort(byDemand);
+const journeys = inNetwork(sys.key, 'journey').sort(byDemand);
+const stops = inNetwork(sys.key, 'stop').sort(byDemand);
+const h1 = `${sys.name} ${word}s`;
+const a = sys.attribution;
+const mode = routes[0] ? modeFor(routes[0].routeType, sys) : 'transit';
+const lede = `${sys.area}.`.replace(/^\./, '');
+const covers = `Headway covers ${routes.length} of ${sys.name}’s ${sys.totalRoutes} routes so far, starting with the ones people look up most. Each page has the whole day by hour at any stop.`;
+const title = fit(60, `${h1}: routes, stops and times`, h1);
+const description = fit(160, `${h1}: full day by hour, first and last ${mode} times and every stop for the routes people look up most in ${sys.area}.`, `${h1}: first and last times and every stop for the most looked-up routes.`, h1);
+const crumbs = [{ name: 'Home', href: '/' }, { name: sys.name }];
+---
+<Base title={title} description={description} path={sys.url} operator={sys.name} noindex={!hubIndexed(sys.key)} jsonld={[crumbsLd(crumbs)]}>
+  <section slot="hero" class="container hero">
+    <div class="hero-text">
+      <Crumbs items={crumbs} />
+      <h1>{h1}</h1>
+      <p class="lede">{lede} {covers}</p>
+    </div>
+  </section>
+
+  {routes.length > 0 && (
+    <section>
+      <h2 class="section-title">Routes people look up most</h2>
+      <table class="data">
+        <thead><tr><th scope="col">Route</th><th scope="col">Runs between</th><th scope="col" class="r">First weekday</th><th scope="col" class="r">Last weekday</th></tr></thead>
+        <tbody>
+          {routes.map((r) => {
+            const w = weekdayRange(r);
+            return (
+              <tr>
+                <td><Badge color={r.color} text={r.short || routeLabel(r)} href={r.url} /></td>
+                <td><a href={r.url}>{r.name.replace(/\s+-\s+/g, ' to ')}</a></td>
+                <td class="r">{w?.first || 'none'}</td><td class="r">{w?.last || 'none'}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  <Ad />
+
+  {journeys.length > 0 && (
+    <section>
+      <h2 class="section-title">Popular trips</h2>
+      <div class="chips">{journeys.map((j) => <a class="chip" href={j.url}>{j.fromName} to {j.toName}</a>)}</div>
+    </section>
+  )}
+
+  {stops.length > 0 && (
+    <section>
+      <h2 class="section-title">Busy stops</h2>
+      <div class="chips">{stops.map((s) => <a class="chip" href={s.url}>{place(s.name)}</a>)}</div>
+    </section>
+  )}
+
+  <section class="two">
+    <div class="panel">
+      <h2>About this data</h2>
+      <p>{cap(word)}s come from {a.text}’s open data, under {a.license}. They were refreshed on {longDate(sys.builtOn)}{sys.feed?.to ? `, and the current ${word} runs to ${longDate(sys.feed.to)}` : ''}.</p>
+    </div>
+    <div class="panel">
+      <h2>Live times and disruptions</h2>
+      <p>Headway shows the published {word}, not where a vehicle is right now. For cancellations, detours and fares, check {sys.name} directly.</p>
+    </div>
+  </section>
+</Base>

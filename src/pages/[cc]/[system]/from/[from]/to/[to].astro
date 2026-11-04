@@ -1,0 +1,186 @@
+---
+import Base from '../../../../../../layouts/Base.astro';
+import Ad from '../../../../../../components/Ad.astro';
+import Badge from '../../../../../../components/Badge.astro';
+import Crumbs from '../../../../../../components/Crumbs.astro';
+import Faq from '../../../../../../components/Faq.astro';
+import Plate from '../../../../../../components/Plate.astro';
+import { pages, byUrl, systems, crumbsLd, faqLd, sourceLine, tWord, modeFor, vehicleFor, pluralOf, fit, dayPhrase, cap, routeLabel, shortDate, median } from '../../../../../../lib/site.js';
+import { fmt, span, gridHtml } from '../../../../../../lib/time.js';
+
+export function getStaticPaths() {
+  return pages.filter((p) => p.type === 'journey').map((p) => {
+    const [cc, system] = p.key.split('/');
+    return { params: { cc, system, from: p.from, to: p.to }, props: { p } };
+  });
+}
+
+const { p } = Astro.props;
+const sys = systems[p.key];
+const word = tWord(sys);
+const A = p.fromName, B = p.toName;
+const modes = [...new Set(p.routes.map((r) => modeFor(r.routeType, sys)))];
+const mode = modes.length === 1 ? modes[0] : 'transit';
+const vList = [...new Set(p.routes.map((r) => vehicleFor(r.routeType, sys)))];
+const v = vList.length === 1 ? vList[0] : 'service';
+const vs = v === 'service' ? 'services' : pluralOf(v);
+const LIST_LIMIT = 40; // beyond this a list stops being readable; the hour grid takes over
+
+const WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const onlyText = (only) => `${only.map((d) => WEEK[d]).join(', ')} only`;
+const days = p.days.map((d) => {
+  const rows = p.trips[d.key] || [];
+  const durs = rows.map((r) => r[1] - r[0]);
+  return { ...d, rows, n: rows.length, med: median(durs), first: rows[0]?.[0], last: rows.at(-1)?.[0], big: rows.length > LIST_LIMIT };
+}).filter((d) => d.n);
+const allRows = days.flatMap((d) => d.rows);
+const durs = allRows.map((r) => r[1] - r[0]).sort((a, b) => a - b);
+const typical = median(durs);
+const main = days[0];
+const h1 = `${A} to ${B} ${mode === 'transit' ? 'bus and train' : mode}`;
+const manyRoutes = p.routes.length > 1;
+const namedRoute = /\d/.test(routeLabel(p.routes[0])) ? `${routeLabel(p.routes[0])} ` : '';
+const direct = manyRoutes ? `Direct ${vs} on ${p.routes.length} routes run` : `A direct ${namedRoute}${v} runs`;
+const lede = `${direct} ${main.n} ${main.n === 1 ? 'time' : 'times'} on ${dayPhrase(main.label)}${days[1] ? ` and ${days[1].n} on ${dayPhrase(days[1].label)}` : ''}. The trip takes about ${span(typical)}.`;
+const title = fit(60, `${h1} ${word} and times`, `${h1} ${word}`, h1);
+const description = fit(160,
+  `${h1}: ${main.n} direct departures on ${dayPhrase(main.label)}, about ${span(typical)}. First ${fmt(main.first)}, last ${fmt(main.last)}. Full ${word} and where to board.`,
+  `${h1}: about ${span(typical)}. First ${fmt(main.first)}, last ${fmt(main.last)}. Full ${word}.`,
+  `${h1}. Full ${word}.`);
+const crumbs = [{ name: 'Home', href: '/' }, { name: sys.name, href: sys.url }, { name: `${A} to ${B}` }];
+
+const stopUrl = (c) => `${sys.url}/stop/${encodeURIComponent(c)}`;
+const stopLink = (c) => (byUrl.has(stopUrl(c)) ? stopUrl(c) : null);
+const count = (i) => { const m = new Map(); for (const r of allRows) m.set(r[i], (m.get(r[i]) || 0) + 1); return [...m.entries()].sort((a, b) => b[1] - a[1]).map(([c]) => c); };
+const boards = count(3), alights = count(4);
+const routeRows = p.routes.map((r, i) => {
+  const trips = main.rows.filter((t) => t[2] === i);
+  return { ...r, n: trips.length, first: trips[0]?.[0], last: trips.at(-1)?.[0], url: byUrl.has(`${sys.url}/${r.slug}`) ? `${sys.url}/${r.slug}` : null };
+}).filter((r) => allRows.some((t) => p.routes[t[2]]?.slug === r.slug)).sort((a, b) => b.n - a.n);
+
+const fastest = durs[0], slowest = durs.at(-1);
+const faq = [
+  { q: `How long does the ${mode === 'transit' ? 'trip' : mode} from ${A} to ${B} take?`, a: fastest === slowest ? `About ${span(typical)}.` : `About ${span(typical)}. The fastest trip takes ${span(fastest)} and the slowest ${span(slowest)}.` },
+  { q: `What time is the first ${v}?`, a: days.map((d) => `${cap(dayPhrase(d.label))} at ${fmt(d.first)}`).join('. ') + '.' },
+  { q: `What time is the last ${v}?`, a: days.map((d) => `${cap(dayPhrase(d.label))} at ${fmt(d.last)}`).join('. ') + '.' },
+  { q: `Do I need to change ${vs}?`, a: `No. Every departure on this page goes direct from ${A} to ${B}.` },
+  { q: `How many ${vs} run each week?`, a: `${p.weekly} direct departures a week from ${A} to ${B}.` },
+  { q: 'Are these live times?', a: `No. They are ${sys.name}’s published ${word}, and a ${v} can run early or late. Check ${sys.name} for disruptions.` },
+];
+
+const exceptionText = (e) => {
+  const what = e.runs === 'none' ? `no direct ${vs}` : e.runs === 'special' ? `a special ${word}; check ${sys.name}` : `the ${p.days.find((d) => d.key === e.runs)?.label || 'usual'} ${word}`;
+  return { when: `${e.holiday ? `${e.holiday}, ` : ''}${shortDate(e.date)}`, what };
+};
+const clientData = {
+  tz: sys.timezone, days: p.days.map(({ key, label, days: dd }) => ({ key, label, days: dd })), exceptions: p.exceptions, v, vs, operator: sys.name,
+  trips: Object.fromEntries(Object.entries(p.trips).map(([k, rows]) => [k, rows.map((r) => [r[0], r[1], r[5] || null])])),
+};
+const reverse = p.reverse && byUrl.get(p.reverse);
+const others = pages.filter((o) => o.type === 'journey' && o.key === p.key && o !== p && o !== reverse).sort((a, b) => b.peak.impr - a.peak.impr).slice(0, 6);
+---
+<Base title={title} description={description} path={p.url} operator={sys.name} jsonld={[crumbsLd(crumbs), faqLd(faq)]}>
+  <section slot="hero" class="container hero">
+    <div class="hero-text">
+      <Crumbs items={crumbs} />
+      <h1>{h1}</h1>
+      <p class="lede">{lede}</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><p data-next-label>First {v}</p><p data-next-time>{fmt(main.first)}</p></div>
+      <div class="stat"><p>Takes about</p><p>{span(typical)}</p></div>
+      <div class="stat"><p>Straight line</p><p>{Math.round(p.km)} km</p></div>
+      <p class="stats-note">Worked out from the {word}, not live.</p>
+    </div>
+  </section>
+
+  <section id="times">
+    <h2 class="section-title">{A} to {B} {word}</h2>
+    <div class="day-strip" data-day-strip hidden role="group" aria-label="Choose a day"></div>
+    <p class="day-notice" data-day-notice hidden></p>
+    <div class="day-cards">
+      {days.map((d) => (
+        <div class="day-card" data-day-card={d.key}>
+          <h3>{d.label}</h3>
+          {d.big ? (
+            <>
+              <p class="section-note">{d.n} departures from {A}. Minutes past each hour.</p>
+              <div class="grid-slot" set:html={gridHtml([d], { [d.key]: [...new Set(d.rows.map((r) => r[0]))].sort((a, b) => a - b) }, vs)} />
+            </>
+          ) : (
+            <table class="trip">
+              <thead><tr><th scope="col">Leaves {A}</th><th scope="col" aria-hidden="true"></th><th scope="col">Arrives {B}</th><th scope="col" class="takes">Takes</th></tr></thead>
+              <tbody>
+                {d.rows.map((r) => (
+                  <tr data-dep={r[0]} data-only={r[5] ? r[5].join(',') : undefined}>
+                    <td class="dep">{fmt(r[0])}{r[5] && <span class="only">{onlyText(r[5])}</span>}</td>
+                    <td class="dash" aria-hidden="true"><i></i></td>
+                    <td class="arr">{fmt(r[1])}</td>
+                    <td class="takes">{span(r[1] - r[0])}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <Ad />
+
+  <section class="two">
+    <div class="prose">
+      <h2 class="section-title">Where to catch it</h2>
+      <p class="watch">Board at {boards.slice(0, 4).map((c, i) => <>{i > 0 && (i === Math.min(boards.length, 4) - 1 ? ' or ' : ', ')}{stopLink(c) ? <a href={stopLink(c)}>{p.stopNames[c]}</a> : p.stopNames[c]}</>)}.</p>
+      <p>Times to {B} are for {alights.slice(0, 3).map((c, i) => <>{i > 0 && (i === Math.min(alights.length, 3) - 1 ? ' or ' : ', ')}{p.stopNames[c]}</>)}. The {v} may go on from there, so check your stop if you are heading further along.</p>
+      {reverse && <p>Going the other way? <a href={reverse.url}>{reverse.fromName} to {reverse.toName}</a>.</p>}
+      {p.exceptions.length > 0 && (
+        <>
+          <h3 class="section-note">Coming holiday changes</h3>
+          <ul class="holidays">{p.exceptions.map(exceptionText).map((h) => <li><b>{h.when}:</b> {h.what}</li>)}</ul>
+        </>
+      )}
+    </div>
+    {p.shape && (
+      <figure class="fig">
+        <Plate shape={p.shape} className="place-plate" label={`The real path of ${routeLabel(p.routes[0])}. It may run beyond ${A} and ${B}.`} />
+        <figcaption class="fig-note">The whole of {routeLabel(p.routes[0])}, from the operator’s route data.</figcaption>
+      </figure>
+    )}
+  </section>
+
+  {manyRoutes && (
+    <section>
+      <h2 class="section-title">Routes on this trip</h2>
+      <table class="data">
+        <thead><tr><th scope="col">Route</th><th scope="col">Runs between</th><th scope="col" class="r">First</th><th scope="col" class="r">Last</th><th scope="col" class="r col-wide">{cap(dayPhrase(main.label))}</th></tr></thead>
+        <tbody>
+          {routeRows.map((r) => (
+            <tr>
+              <td><Badge color={r.color} text={r.short || routeLabel(r)} href={r.url || undefined} /></td>
+              <td>{r.name}</td>
+              <td class="r">{r.first != null ? fmt(r.first) : 'none'}</td><td class="r">{r.last != null ? fmt(r.last) : 'none'}</td><td class="r col-wide">{r.n}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  <Faq faq={faq} title="Questions about this trip" />
+
+  <Ad />
+
+  {others.length > 0 && (
+    <section>
+      <h2 class="section-title">More trips on {sys.name}</h2>
+      <div class="chips">{others.map((o) => <a class="chip" href={o.url}>{o.fromName} to {o.toName}</a>)}</div>
+    </section>
+  )}
+
+  <p class="source">{sourceLine(sys)}</p>
+
+  <script type="application/json" id="page-data" set:html={JSON.stringify(clientData).replace(/</g, '\\u003c')} />
+  <script>import '../../../../../../scripts/journey.js';</script>
+</Base>

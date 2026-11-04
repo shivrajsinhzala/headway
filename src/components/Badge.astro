@@ -1,0 +1,7 @@
+---
+import { badgeStyle } from '../lib/site.js';
+const { color, text, href, size = '' } = Astro.props;
+const style = badgeStyle(color);
+const Tag = href ? 'a' : 'span';
+---
+<Tag class:list={['badge', size && `badge-${size}`]} href={href} style={style || undefined}>{text}</Tag>

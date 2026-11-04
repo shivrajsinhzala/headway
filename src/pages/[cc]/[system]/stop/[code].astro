@@ -1,0 +1,123 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import Ad from '../../../../components/Ad.astro';
+import Badge from '../../../../components/Badge.astro';
+import Crumbs from '../../../../components/Crumbs.astro';
+import Faq from '../../../../components/Faq.astro';
+import { pages, byUrl, systems, crumbsLd, faqLd, sourceLine, tWord, place, signText, modeFor, vehicleFor, pluralOf, fit, dayPhrase, cap } from '../../../../lib/site.js';
+import { fmt } from '../../../../lib/time.js';
+
+export function getStaticPaths() {
+  return pages.filter((p) => p.type === 'stop').map((p) => {
+    const [cc, system] = p.key.split('/');
+    return { params: { cc, system, code: p.code }, props: { p } };
+  });
+}
+
+const { p } = Astro.props;
+const sys = systems[p.key];
+const word = tWord(sys);
+const routes = [...p.routes].sort((a, b) => a.short.localeCompare(b.short, 'en', { numeric: true }));
+const modes = [...new Set(routes.map((r) => modeFor(r.routeType, sys)))];
+const mode = modes.length === 1 ? modes[0] : 'transit';
+const v = [...new Set(routes.map((r) => vehicleFor(r.routeType, sys)))].length === 1 ? vehicleFor(routes[0].routeType, sys) : 'service';
+const vs = v === 'service' ? 'services' : pluralOf(v);
+const shortList = [...new Set(routes.map((r) => r.short || r.name))];
+const listText = (a) => (a.length > 1 ? `${a.slice(0, -1).join(', ')} and ${a.at(-1)}` : a[0]);
+
+const dayFor = (r, wd) => r.days.find((d) => d.days.includes(wd));
+const timesOn = (r, wd) => { const d = dayFor(r, wd); return (d && r.times[d.key]) || []; };
+const rows = routes.map((r) => {
+  const week = timesOn(r, 0);
+  const url = `${sys.url}/${r.slug}`;
+  return { ...r, href: byUrl.has(url) ? `${url}#stop-${encodeURIComponent(p.code)}` : null, first: week[0] != null ? fmt(week[0]) : 'none', last: week.length ? fmt(week.at(-1)) : 'none', wk: week.length, sat: timesOn(r, 5).length, sun: timesOn(r, 6).length };
+});
+const all = (wd) => routes.flatMap((r) => timesOn(r, wd)).sort((a, b) => a - b);
+const week = all(0), sat = all(5), sun = all(6);
+const name = place(p.name);
+const h1 = `${name} ${mode === 'transit' ? 'departure' : mode} times`;
+const title = fit(60, `${h1}: stop ${p.code}`, h1);
+const lede = [`${cap(shortList.length > 1 ? 'routes' : 'route')} ${listText(shortList.slice(0, 8))}${shortList.length > 8 ? ' and more' : ''} ${shortList.length > 1 ? 'serve' : 'serves'} this stop.`, week.length ? `On weekdays the first ${v} leaves at ${fmt(week[0])}.` : ''].filter(Boolean).join(' ');
+const description = fit(160,
+  `${h1}, stop ${p.code}. ${lede} See first and last times for every route and the next departures.`,
+  `${h1}, stop ${p.code}. ${lede}`,
+  `${h1}, stop ${p.code}.`);
+const crumbs = [{ name: 'Home', href: '/' }, { name: sys.name, href: sys.url }, { name: `Stop ${p.code}` }];
+
+const noSat = rows.filter((r) => !r.sat), noSun = rows.filter((r) => r.sat && !r.sun);
+const weekendNote = [
+  noSat.length ? `${listText([...new Set(noSat.map((r) => r.short || r.name))])} ${noSat.length > 1 ? 'have' : 'has'} no Saturday ${vs} here.` : '',
+  noSun.length ? `${listText([...new Set(noSun.map((r) => r.short || r.name))])} ${noSun.length > 1 ? 'have' : 'has'} no Sunday ${vs} here.` : '',
+  sat.length ? `In total ${sat.length} ${vs} leave on Saturday and ${sun.length} on Sunday, against ${week.length} on a weekday.` : '',
+].filter(Boolean).join(' ') || `Every route here runs on the same days all week.`;
+
+const faq = [
+  week.length && { q: `What time is the first ${v} from ${name}?`, a: `Weekdays ${fmt(week[0])}.${sat.length ? ` Saturday ${fmt(sat[0])}.` : ''}${sun.length ? ` Sunday ${fmt(sun[0])}.` : ''}` },
+  week.length && { q: `What time is the last ${v} from ${name}?`, a: `Weekdays ${fmt(week.at(-1))}.${sat.length ? ` Saturday ${fmt(sat.at(-1))}.` : ''}${sun.length ? ` Sunday ${fmt(sun.at(-1))}.` : ''}` },
+  { q: 'Which routes stop here?', a: `${rows.map((r) => `${r.short || r.name} to ${signText(r.headsign)}`).join(', ')}.` },
+  { q: 'Are these live times?', a: `No. They are ${sys.name}’s published ${word}, and a ${v} can run early or late. Check ${sys.name} for disruptions.` },
+].filter(Boolean);
+
+const clientData = {
+  tz: sys.timezone,
+  routes: routes.map((r) => ({ short: r.short || r.name, color: r.color, headsign: signText(r.headsign), days: r.days, times: r.times, exceptions: r.exceptions })),
+};
+const openDay = routes[0].days.find((d) => routes[0].times[d.key]?.length) || routes[0].days[0];
+const firsts = rows.filter((r) => r.wk).slice(0, 6);
+---
+<Base title={title} description={description} path={p.url} operator={sys.name} jsonld={[crumbsLd(crumbs), faqLd(faq)]}>
+  <section slot="hero" class="container hero">
+    <div class="hero-text">
+      <Crumbs items={crumbs} />
+      <h1>{h1}</h1>
+      <p class="lede">{lede}</p>
+    </div>
+    <div class="board" data-board aria-live="polite">
+      <h2 data-board-title>First weekday departures</h2>
+      <table>
+        <tbody data-board-rows>
+          {firsts.map((r) => <tr><td><Badge color={r.color} text={r.short || r.name} /></td><td>{signText(r.headsign)}</td><td>{r.first}</td></tr>)}
+        </tbody>
+      </table>
+      <p>Worked out from the {word}, not live.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Routes from this stop</h2>
+    <table class="data">
+      <thead><tr><th scope="col">Route</th><th scope="col">Heading to</th><th scope="col" class="r">First weekday</th><th scope="col" class="r">Last weekday</th><th scope="col" class="r col-wide">Weekday {vs}</th><th scope="col" class="r col-wide">Sat</th><th scope="col" class="r col-wide">Sun</th></tr></thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr>
+            <td><Badge color={r.color} text={r.short || r.name} href={r.href || undefined} /></td>
+            <td>{signText(r.headsign)}</td>
+            <td class="r">{r.first}</td><td class="r">{r.last}</td><td class="r col-wide">{r.wk}</td><td class="r col-wide">{r.sat}</td><td class="r col-wide">{r.sun}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  <Ad />
+
+  <section class="two">
+    <div>
+      <h2 class="section-title">Weekends</h2>
+      <p class="watch">{weekendNote}</p>
+    </div>
+    <div class="panel">
+      <h2>Finding the stop</h2>
+      <p>Stop {p.code}, {p.name}. <a href={`https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lon}#map=18/${p.lat}/${p.lon}`} rel="nofollow">Open the map</a></p>
+    </div>
+  </section>
+
+  <Faq faq={faq} title={`Questions about ${name}`} />
+
+  <Ad />
+
+  <p class="source">{sourceLine(sys)}</p>
+
+  <script type="application/json" id="page-data" set:html={JSON.stringify(clientData).replace(/</g, '\\u003c')} />
+  <script>import '../../../../scripts/stop.js';</script>
+</Base>

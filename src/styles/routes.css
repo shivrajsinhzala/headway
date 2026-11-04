@@ -1,0 +1,21 @@
+/* Written by scripts/sync-data.mjs: operators' own route colours. */
+:root {
+  --r-007dc3: #007dc3;
+  --r-152c6b: #152c6b;
+  --r-1e8ecd: #1e8ecd;
+  --r-243e8c: #243e8c;
+  --r-27855a: #27855a;
+  --r-333434: #333434;
+  --r-4d8b3f: #4d8b3f;
+  --r-509e2f: #509e2f;
+  --r-591769: #591769;
+  --r-633293: #633293;
+  --r-6eceb2: #6eceb2;
+  --r-8f1a95: #8f1a95;
+  --r-990000: #990000;
+  --r-a57fb2: #a57fb2;
+  --r-bd0021: #bd0021;
+  --r-e463a4: #e463a4;
+  --r-f99d1e: #f99d1e;
+  --r-ff8200: #ff8200;
+}

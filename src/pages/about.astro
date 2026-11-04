@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import { systems, inNetwork, pages } from '../lib/site.js';
+
+const networks = Object.values(systems).sort((a, b) => a.name.localeCompare(b.name));
+const sources = [...new Map(networks.map((s) => [`${s.attribution.text}|${s.attribution.license}`, s.attribution])).values()];
+---
+<Base title="About Headway: who makes it and where the times come from" description="Headway is an independent site that turns official open transit data into readable timetables. Who builds it, the data sources and how the times are kept current." path="/about">
+  <h1 slot="hero" class="container page-title">About Headway</h1>
+  <div class="plain">
+    <p>Headway is an independent website that turns official timetable data into pages that are quick to read on a phone: the whole day at your own stop, with the next departure marked. It has {pages.length} pages today across {networks.length} networks in Australia and Phoenix, and grows as those pages prove useful.</p>
+    <h2>Where the times come from</h2>
+    <p>Every timetable is generated from the operator’s or transport authority’s own published schedule data. Nothing is typed in by hand. Times are arranged by hour and stop; nothing is added. Each page says when its data was refreshed and how far ahead its timetable runs.</p>
+    <h2 id="sources">Sources</h2>
+    <ul>
+      {sources.map((a) => <li><a href={a.url} rel="nofollow">{a.text}</a>, under <a href={a.licenseUrl} rel="nofollow license">{a.license}</a></li>)}
+    </ul>
+    <p>Town names on trip pages come from <a href="https://www.geonames.org/" rel="nofollow">GeoNames</a>, under <a href="https://creativecommons.org/licenses/by/4.0/" rel="nofollow license">CC BY 4.0</a>.</p>
+    <h2>What it is not</h2>
+    <p>Headway is not run by, affiliated with or endorsed by any operator, transport authority or government. It shows scheduled times, not live vehicle positions. For fares, disruptions and cancellations, use the operator’s own website or app.</p>
+    <h2>Who makes it</h2>
+    <p>Headway is built and run by <a href="https://shivrajsinh.in" rel="author">Shivrajsinh Zala</a>, a web developer who makes public transport tools.</p>
+    <h2>Contact and corrections</h2>
+    <p>Email <a href="mailto:zalashivraj2642003@gmail.com">zalashivraj2642003@gmail.com</a>. If a time looks wrong, send the page’s address and what you expected.</p>
+  </div>
+</Base>

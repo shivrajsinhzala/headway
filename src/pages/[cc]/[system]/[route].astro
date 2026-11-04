@@ -1,0 +1,173 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Ad from '../../../components/Ad.astro';
+import Badge from '../../../components/Badge.astro';
+import Crumbs from '../../../components/Crumbs.astro';
+import Faq from '../../../components/Faq.astro';
+import Plate from '../../../components/Plate.astro';
+import { pages, byUrl, crumbsLd, faqLd, sourceLine, place, toward, dayPhrase, routeLabel, cap } from '../../../lib/site.js';
+import { routeView } from '../../../lib/route.js';
+import { fmt, gridHtml, span } from '../../../lib/time.js';
+
+export function getStaticPaths() {
+  return pages.filter((p) => p.type === 'route').map((p) => {
+    const [cc, system] = p.key.split('/');
+    return { params: { cc, system, route: p.slug }, props: { p } };
+  });
+}
+
+const { p } = Astro.props;
+const x = routeView(p);
+const { sys, v, vs, word } = x;
+const crumbs = [{ name: 'Home', href: '/' }, { name: sys.name, href: sys.url }, { name: x.label }];
+const stopHref = (code) => (p.stopLinks.includes(code) ? `${sys.url}/stop/${encodeURIComponent(code)}` : null);
+
+// What the browser needs: each direction's first stop now, every other stop fetched only on demand.
+const clientData = {
+  tz: sys.timezone, v, vs, operator: sys.name, days: p.days, exceptions: p.exceptions, dataUrl: p.dataUrl,
+  dirs: p.dirs.map((d) => ({ firstCode: d.firstCode, first: d.first })),
+};
+const seen = (stops) => stops.filter((s, i, a) => s.hasTimes && a.findIndex((o) => o.code === s.code) === i);
+const related = p.related.map((u) => byUrl.get(u));
+const journeys = p.journeys.map((u) => byUrl.get(u));
+---
+<Base title={x.title} description={x.description} path={p.url} operator={sys.name} jsonld={[crumbsLd(crumbs), faqLd(x.faq)]}>
+  <section slot="hero" class="container hero">
+    <div class="hero-text">
+      <Crumbs items={crumbs} />
+      <h1>{x.h1}</h1>
+      <p class="lede">{x.lede}</p>
+    </div>
+    <div class:list={['hero-side', !p.shape && 'solo']}>
+      <div class="card-next" data-next aria-live="polite">
+        <p class="next-label" data-next-label>First from {x.a}, {dayPhrase(x.openDay.label)}</p>
+        <p class="next-time" data-next-time>{x.openT.length ? fmt(x.openT[0]) : ''}</p>
+        <p class="next-more" data-next-more>{x.openT.length ? `last ${fmt(x.openT.at(-1))}` : ''}</p>
+        <p class="next-note" data-next-note>Worked out from the {word}, not live.</p>
+      </div>
+      <Plate shape={p.shape} label={`The real path of ${x.label}, from ${x.a} to ${x.b}. The coral dot marks ${x.a}.`} />
+    </div>
+  </section>
+
+  <div class="times-layout" id="times">
+    <div class="times-main">
+      <div class="times-head">
+        <div>
+          <h2 class="section-title">The whole day, by hour</h2>
+          <p class="section-note">Pick your stop and the times change to match. Minutes past each hour.</p>
+        </div>
+        <button class="btn-quiet" type="button" data-print hidden>Print or save as PDF</button>
+      </div>
+      {p.dirs.length > 1 && (
+        <div class="dir-switch" role="group" aria-label="Direction">
+          {p.dirs.map((d, i) => <button type="button" data-dir-btn={i} aria-pressed={i === 0 ? 'true' : 'false'}>To {toward(d)}</button>)}
+        </div>
+      )}
+      <div class="sheets">
+        {p.dirs.map((d, i) => (
+          <div class:list={['sheet', i > 0 && 'off-phone']} data-sheet={i} id={`dir-${i}`}>
+            <h3>{place(d.firstName) === place(d.lastName) ? `Loop from ${place(d.firstName)}` : `From ${place(d.firstName)} to ${toward(d)}`}</h3>
+            <label class="picker" data-picker hidden>
+              <span>Your stop</span>
+              <select data-stop-select>
+                {seen(d.stops).map((s) => <option value={s.code} selected={s.code === d.firstCode}>{s.name}</option>)}
+              </select>
+            </label>
+            <p class="sheet-note" data-sheet-note></p>
+            <div class="grid-slot" data-grid set:html={gridHtml(p.days, d.first, vs)} />
+          </div>
+        ))}
+      </div>
+    </div>
+    <Ad kind="rail" />
+  </div>
+
+  <Ad />
+
+  <section class="two">
+    <div>
+      <h2 class="section-title">How often it runs</h2>
+      <table class="freq">
+        <thead><tr><th scope="col">{cap(dayPhrase(x.busy.label))}</th>{x.dirCols.map((d) => <th scope="col">To {toward(d)}</th>)}</tr></thead>
+        <tbody>
+          {x.freq.map((r) => <tr><th scope="row">{r.name}</th>{r.cells.map((c) => <td>{c}</td>)}</tr>)}
+          <tr><th scope="row">{cap(vs)} a day</th>{x.daily.map((n) => <td>{n}</td>)}</tr>
+          {x.ends.some(Boolean) && <tr><th scope="row">End to end</th>{x.ends.map((e) => <td>{e || 'varies'}</td>)}</tr>}
+          {x.otherDays.map((r) => <tr><th scope="row">{r.name}</th>{r.cells.map((c) => <td>{c}</td>)}</tr>)}
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h2 class="section-title">When to watch out</h2>
+      <div class="watch">{x.watch.map((w) => <p>{w}</p>)}</div>
+      {x.bars.length > 1 && (
+        <>
+          <div class="bars" role="img" aria-label={x.barsAria}>
+            {x.bars.map((b) => <div class:list={[b.gap && 'gap']} style={`height:${b.height}%`}></div>)}
+          </div>
+          <div class="ticks" aria-hidden="true">{x.bars.map((b) => <span>{b.tick}</span>)}</div>
+          <p class="bars-note">{cap(vs)} per hour from {x.a}, {dayPhrase(x.busy.label)}.{x.bars.some((b) => b.gap) ? ' Empty hours are shown in pale coral.' : ''}</p>
+        </>
+      )}
+      {x.holidays.length > 0 && (
+        <>
+          <h3 class="section-note">Coming holiday changes</h3>
+          <ul class="holidays">{x.holidays.map((h) => <li><b>{h.when}:</b> {h.what}</li>)}</ul>
+        </>
+      )}
+    </div>
+  </section>
+
+  <Ad />
+
+  <section id="stops">
+    <h2 class="section-title">Every stop on the {x.ref}</h2>
+    <p class="section-note">Minutes from the first stop on a typical trip. Choose Times to see the whole day at that stop.</p>
+    <div class="stop-lists">
+      {p.dirs.map((d, i) => {
+        const last = [...d.stops].reverse().find((s) => s.min != null);
+        return (
+          <details open={i === 0} data-stop-list>
+            <summary>{`To ${toward(d)}`}<small>{d.stops.length} stops{last?.min ? `, about ${span(last.min)}` : ''}</small></summary>
+            <ol class="line">
+              {d.stops.map((s) => (
+                <li>
+                  {stopHref(s.code) ? <a href={stopHref(s.code)}>{s.name}</a> : <span>{s.name}</span>}
+                  <span class="stop-min">{s.min != null ? `${s.min} min` : ''}</span>
+                  {s.hasTimes ? <button class="stop-go" type="button" data-go-dir={i} data-go-stop={s.code} hidden aria-label={`Times at ${s.name}`}>Times</button> : <span></span>}
+                </li>
+              ))}
+            </ol>
+          </details>
+        );
+      })}
+    </div>
+  </section>
+
+  <Faq faq={x.faq} title={`Questions about the ${x.ref}`} />
+
+  <Ad />
+
+  {related.length > 0 && (
+    <section>
+      <h2 class="section-title">{p.relatedShare ? 'Routes that share these stops' : `More ${sys.name} routes`}</h2>
+      <div class="chips">
+        {related.map((r) => <a class="chip" href={r.url}><Badge color={r.color} text={r.short || routeLabel(r)} />{r.name}</a>)}
+      </div>
+    </section>
+  )}
+
+  {journeys.length > 0 && (
+    <section>
+      <h2 class="section-title">Trips on this route</h2>
+      <div class="chips">
+        {journeys.map((j) => <a class="chip" href={j.url}>{j.fromName} to {j.toName}</a>)}
+      </div>
+    </section>
+  )}
+
+  <p class="source">{sourceLine(sys)}</p>
+
+  <script type="application/json" id="page-data" set:html={JSON.stringify(clientData).replace(/</g, '\\u003c')} />
+  <script>import '../../../scripts/route.js';</script>
+</Base>
