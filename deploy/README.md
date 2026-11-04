@@ -40,6 +40,8 @@ deploy/deploy.sh
 
 `deploy.sh` builds, stops if any page fails `verify-build`, uploads a new release, swaps it live in one step, checks a page of each type and goes back automatically if a check fails. It keeps the live release and the one before it.
 
+Cloudflare keeps pages for up to a day (the `Headway HTML edge cache` rule follows the `s-maxage` nginx sends), and `deploy.sh` doesn't purge. A release can take a day to reach every visitor; purge `headway.shivrajsinh.in` in the Cloudflare dashboard if it can't wait.
+
 ## Going back
 
 ```bash
