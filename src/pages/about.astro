@@ -5,7 +5,7 @@ import { systems, inNetwork, pages } from '../lib/site.js';
 const networks = Object.values(systems).sort((a, b) => a.name.localeCompare(b.name));
 const sources = [...new Map(networks.map((s) => [`${s.attribution.text}|${s.attribution.license}`, s.attribution])).values()];
 ---
-<Base title="About Headway: who makes it and where the times come from" description="Headway is an independent site that turns official open transit data into readable timetables. Who builds it, the data sources and how the times are kept current." path="/about">
+<Base title="About Headway: who makes it and where the times come from" description="Headway turns official open transit data into readable timetables. Meet the maker, see the data sources and learn how times are kept current." path="/about">
   <h1 slot="hero" class="container page-title">About Headway</h1>
   <div class="plain">
     <p>Headway is an independent website that turns official timetable data into pages that are quick to read on a phone: the whole day at your own stop, with the next departure marked. It has {pages.length} pages today across {networks.length} networks in Australia and Phoenix, and grows as those pages prove useful.</p>

@@ -1,0 +1,16 @@
+---
+import { longDate, tWord } from '../lib/site.js';
+
+const { sys, path = '' } = Astro.props;
+const reportHref = `mailto:zalashivraj2642003@gmail.com?subject=${encodeURIComponent('Headway timetable issue')}&body=${encodeURIComponent(`Page: https://headway.shivrajsinh.in${path}\nExpected time or correction: `)}`;
+const a = sys.attribution;
+const word = tWord(sys);
+---
+<p class="source">
+  Source: <a href={a.url} rel="nofollow">{a.text}</a>, open data under <a href={a.licenseUrl} rel="nofollow license">{a.license}</a>.
+  Refreshed {longDate(sys.builtOn)}.
+  {sys.feed?.to && <>The current {word} runs to {longDate(sys.feed.to)}.</>}
+  {sys.changesOn && <>Times change on {longDate(sys.changesOn)}; this page updates when the new {word} is published.</>}
+  These are scheduled times; check {sys.name} for disruptions. Service summaries are calculated from this published {word}.
+  <a href={reportHref}>Report a timetable issue</a>.
+</p>

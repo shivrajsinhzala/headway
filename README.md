@@ -1,6 +1,19 @@
-# Headway
+# Headway — Public Transit Timetables & Frequency Explorer
 
-Timetable site at headway.shivrajsinh.in (not live yet): Astro static pages, built from the data Stopwatch already generates.
+Live application: **[headway.shivrajsinh.in](https://headway.shivrajsinh.in)**
+
+Sister project: **[Stopwatch (transit.shivrajsinh.in)](https://transit.shivrajsinh.in)**
+
+Headway is a phone-friendly, lightning-fast static timetable web application built from open GTFS (General Transit Feed Specification) data. It provides departure boards, frequency breakdowns, first and last trip times, and printable timetables across transit networks in Australia (Adelaide, Brisbane, Melbourne) and the United States (Phoenix Valley Metro) without requiring apps or account signups.
+
+## Architecture
+
+Headway is built with [Astro](https://astro.build) as static HTML pages, powered by the open GTFS extraction and compilation pipeline shared with [Stopwatch](https://transit.shivrajsinh.in).
+
+- **Live Timetables**: Shows full-day schedules at any stop, highlighting next departures.
+- **Headway & Frequency**: Highlights intervals between vehicles, first/last trips of the day, and rush-hour schedules.
+- **Privacy-first**: Stop searches and nearby stop calculations occur client-side without tracking user location.
+- **Performance**: Pre-rendered static pages hosted on high-speed CDN edges with ultra-low TTFB.
 
 ## Commands
 
@@ -10,9 +23,11 @@ npm run build     # build dist/, then fail on any page that breaks the checks
 npm run preview   # serve dist/ locally
 ```
 
-`PAGES=200 npm run sync` raises the page count. Ramp it only once most published pages are indexed.
+`PAGES=200 npm run sync` raises the page count. The current generated set uses `PAGES=160`; ramp it only once most published pages are indexed.
 
-Run `sync` after every Stopwatch data refresh. `TRANSIT_DIR` points it at another checkout.
+Run `sync` after every Stopwatch data refresh. `TRANSIT_DIR` points it at another checkout. Afterwards, run `node scripts/headway-migration.mjs` in Stopwatch and reinstall its generated nginx snippet so the exact redirects follow the published page list.
+
+Headway's GA4 measurement ID is `G-L1NMK5XV5F`. The deploy script uses it by default; set `PUBLIC_GA_ID` during a build to override it. Do not reuse Stopwatch's property.
 
 ## What decides what
 

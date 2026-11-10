@@ -4,7 +4,8 @@ import Ad from '../../../../components/Ad.astro';
 import Badge from '../../../../components/Badge.astro';
 import Crumbs from '../../../../components/Crumbs.astro';
 import Faq from '../../../../components/Faq.astro';
-import { pages, byUrl, systems, crumbsLd, faqLd, sourceLine, tWord, place, signText, modeFor, vehicleFor, pluralOf, fit, dayPhrase, cap } from '../../../../lib/site.js';
+import Source from '../../../../components/Source.astro';
+import { pages, byUrl, systems, crumbsLd, tWord, place, signText, modeFor, vehicleFor, pluralOf, fit, dayPhrase, cap } from '../../../../lib/site.js';
 import { fmt } from '../../../../lib/time.js';
 
 export function getStaticPaths() {
@@ -36,7 +37,7 @@ const all = (wd) => routes.flatMap((r) => timesOn(r, wd)).sort((a, b) => a - b);
 const week = all(0), sat = all(5), sun = all(6);
 const name = place(p.name);
 const h1 = `${name} ${mode === 'transit' ? 'departure' : mode} times`;
-const title = fit(60, `${h1}: stop ${p.code}`, h1);
+const title = fit(60, `${h1} (Stop ${p.code})`, h1);
 const lede = [`${cap(shortList.length > 1 ? 'routes' : 'route')} ${listText(shortList.slice(0, 8))}${shortList.length > 8 ? ' and more' : ''} ${shortList.length > 1 ? 'serve' : 'serves'} this stop.`, week.length ? `On weekdays the first ${v} leaves at ${fmt(week[0])}.` : ''].filter(Boolean).join(' ');
 const description = fit(160,
   `${h1}, stop ${p.code}. ${lede} See first and last times for every route and the next departures.`,
@@ -65,7 +66,7 @@ const clientData = {
 const openDay = routes[0].days.find((d) => routes[0].times[d.key]?.length) || routes[0].days[0];
 const firsts = rows.filter((r) => r.wk).slice(0, 6);
 ---
-<Base title={title} description={description} path={p.url} operator={sys.name} jsonld={[crumbsLd(crumbs), faqLd(faq)]}>
+<Base title={title} description={description} path={p.url} modified={p.lastmod} operator={sys.name} jsonld={[crumbsLd(crumbs)]}>
   <section slot="hero" class="container hero">
     <div class="hero-text">
       <Crumbs items={crumbs} />
@@ -114,9 +115,7 @@ const firsts = rows.filter((r) => r.wk).slice(0, 6);
 
   <Faq faq={faq} title={`Questions about ${name}`} />
 
-  <Ad />
-
-  <p class="source">{sourceLine(sys)}</p>
+  <Source sys={sys} path={p.url} />
 
   <script type="application/json" id="page-data" set:html={JSON.stringify(clientData).replace(/</g, '\\u003c')} />
   <script>import '../../../../scripts/stop.js';</script>

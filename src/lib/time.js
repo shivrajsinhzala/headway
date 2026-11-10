@@ -89,5 +89,12 @@ export function upcoming(times, days, exceptions, now) {
     ...(times[yesterday] || []).filter((t) => t - 1440 >= now.min).map((t) => ({ t, key: yesterday, at: t - 1440 })),
     ...(times[today] || []).filter((t) => t >= now.min).map((t) => ({ t, key: today, at: t })),
   ].sort((a, b) => a.at - b.at);
-  return { today, list, tomorrowFirst: (times[tomorrow] || [])[0] ?? null, tomorrowSpecial: tomorrow === 'special' };
+  let next = null;
+  for (let offset = 1; offset <= 7 && !next; offset++) {
+    const day = shiftDay(now, offset);
+    const key = keyFor(day, days, exceptions);
+    const at = (times[key] || [])[0];
+    if (at != null) next = { at, iso: day.iso };
+  }
+  return { today, list, next, tomorrowFirst: (times[tomorrow] || [])[0] ?? null, tomorrowSpecial: tomorrow === 'special' };
 }

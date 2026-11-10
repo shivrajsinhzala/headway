@@ -11,6 +11,7 @@ SSH_HOST="${DEPLOY_SSH:-stopwatch}"
 BASE="${DEPLOY_PATH:-/var/www/headway}"
 CHECK_URL="${DEPLOY_CHECK_URL:-http://127.0.0.1}"
 HOST_HEADER=headway.shivrajsinh.in
+export PUBLIC_GA_ID="${PUBLIC_GA_ID:-G-L1NMK5XV5F}"
 # Checked after the swap: a page of each type, and what Google and riders' browsers fetch.
 CHECKS="/ /au/brisbane /au/brisbane/route-272 /au/vline-coaches/from/cranbourne/to/phillip-island /us/phoenix/stop/13785 /sitemap.xml /robots.txt /search.json /data/au/brisbane/route-272.json"
 

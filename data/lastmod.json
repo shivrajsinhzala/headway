@@ -1,7 +1,7 @@
 {
  "/us/phoenix/route-61": {
-  "hash": "7cb95d4b6db16d69",
-  "date": "2026-11-04"
+  "hash": "86fc789499e6f163",
+  "date": "2026-11-07"
  },
  "/au/brisbane/route-272": {
   "hash": "f540a43347621578",
@@ -20,72 +20,72 @@
   "date": "2026-11-04"
  },
  "/au/brisbane/route-667": {
-  "hash": "44d9fdcb7c142519",
-  "date": "2026-11-04"
+  "hash": "6f7659403dffe19b",
+  "date": "2026-11-07"
  },
  "/us/phoenix/route-mlhd": {
-  "hash": "3b90950f800b06c1",
-  "date": "2026-11-04"
+  "hash": "a55c50c059caee42",
+  "date": "2026-11-07"
  },
  "/us/phoenix/stop/13785": {
   "hash": "9d914509b49c3728",
   "date": "2026-11-04"
  },
  "/au/brisbane/route-325": {
-  "hash": "cd18c669cac128e9",
-  "date": "2026-11-04"
+  "hash": "38c72d43c56db619",
+  "date": "2026-11-09"
  },
  "/au/adelaide/route-400": {
   "hash": "e300595b5f543cb2",
   "date": "2026-11-04"
  },
  "/au/brisbane/route-445": {
-  "hash": "25f26449ef738551",
-  "date": "2026-11-04"
+  "hash": "0ba9b6170421f133",
+  "date": "2026-11-09"
  },
  "/us/phoenix/route-28": {
   "hash": "2d145777a629a88d",
   "date": "2026-11-04"
  },
  "/au/brisbane/route-411": {
-  "hash": "0ef8f4c0587575f7",
-  "date": "2026-11-04"
+  "hash": "44afb903a2530f3f",
+  "date": "2026-11-09"
  },
  "/au/adelaide/from/aberfoyle-park/to/adelaide": {
   "hash": "9d787ef393a249f5",
   "date": "2026-11-04"
  },
  "/us/phoenix/route-3": {
-  "hash": "08b173b1aef69872",
-  "date": "2026-11-04"
+  "hash": "27b018b017315761",
+  "date": "2026-11-07"
  },
  "/au/melbourne-trams/route-11": {
-  "hash": "731bf0a36f3fa323",
-  "date": "2026-11-04"
+  "hash": "07b2e0590313f5b2",
+  "date": "2026-11-09"
  },
  "/au/canberra-light-rail/route-1": {
-  "hash": "6b2303f19becb153",
-  "date": "2026-11-04"
+  "hash": "23bbad9a85ea430e",
+  "date": "2026-11-07"
  },
  "/au/melbourne-buses/from/point-cook/to/williams-landing": {
   "hash": "afba515aa0572b71",
   "date": "2026-11-04"
  },
  "/au/vline-coaches/from/shepparton/to/kyabram": {
-  "hash": "39b2fc66bc34cd47",
-  "date": "2026-11-04"
+  "hash": "7874d9fb282a2fcc",
+  "date": "2026-11-09"
  },
  "/au/vline-coaches/from/kyabram/to/echuca": {
-  "hash": "c69e7a88982749d7",
-  "date": "2026-11-04"
+  "hash": "9bbb44931a9297b2",
+  "date": "2026-11-09"
  },
  "/au/brisbane/from/brisbane/to/beerwah": {
   "hash": "32c4aec59c68342a",
   "date": "2026-11-04"
  },
  "/au/vline-coaches/from/tatura/to/kyabram": {
-  "hash": "bb69a0abebc8300d",
-  "date": "2026-11-04"
+  "hash": "453a9931737a167b",
+  "date": "2026-11-09"
  },
  "/au/victoria-regional-buses/from/san-remo/to/wonthaggi": {
   "hash": "926a80aad967456e",
@@ -116,8 +116,8 @@
   "date": "2026-11-04"
  },
  "/au/melbourne-buses/route-40": {
-  "hash": "5202f0d9a4542b7b",
-  "date": "2026-11-04"
+  "hash": "c14533777363a0e4",
+  "date": "2026-11-09"
  },
  "/us/phoenix/stop/16707": {
   "hash": "9c5d3201656055a7",
@@ -156,8 +156,8 @@
   "date": "2026-11-04"
  },
  "/au/melbourne-buses/route-623": {
-  "hash": "68eed8cef65de902",
-  "date": "2026-11-04"
+  "hash": "77fc018e244bd3b1",
+  "date": "2026-11-09"
  },
  "/us/phoenix/stop/16118": {
   "hash": "10184c8009fcd564",
@@ -208,140 +208,140 @@
   "date": "2026-11-04"
  },
  "/au/brisbane/route-227": {
-  "hash": "f186444a364dfbcc",
-  "date": "2026-11-04"
+  "hash": "0c28e8e4d3f88c1f",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-555": {
-  "hash": "2baa3ef9aac94255",
-  "date": "2026-11-04"
+  "hash": "40d1577f833b06db",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-390": {
-  "hash": "77ff0e78948a0b0c",
-  "date": "2026-11-04"
+  "hash": "dc208f1f54417026",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-348": {
-  "hash": "a18c254768b540f1",
-  "date": "2026-11-04"
+  "hash": "24191fbff0bb85cb",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-204": {
   "hash": "c6b31cba1e2dca5b",
   "date": "2026-11-04"
  },
  "/au/brisbane/route-220": {
-  "hash": "99a1d8f2f6864ec5",
-  "date": "2026-11-04"
+  "hash": "1f9ab5709607b660",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-222": {
-  "hash": "7e00e2caaf793d6f",
-  "date": "2026-11-04"
+  "hash": "4ba247e5c1ddd6e6",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-326": {
   "hash": "bc90fc58f3d2e5d9",
   "date": "2026-11-04"
  },
  "/au/brisbane/route-350": {
-  "hash": "f6556ddf136eb74d",
-  "date": "2026-11-04"
+  "hash": "21e89846377e29f3",
+  "date": "2026-11-07"
  },
  "/au/melbourne-buses/route-517": {
   "hash": "6f1c0080ba845a87",
   "date": "2026-11-04"
  },
  "/au/brisbane/route-132": {
-  "hash": "f6de46afe1f55eb8",
-  "date": "2026-11-04"
+  "hash": "178025dd6c332c62",
+  "date": "2026-11-07"
  },
  "/au/brisbane/route-282": {
-  "hash": "729bf2cfe5ddae33",
-  "date": "2026-11-04"
+  "hash": "c74f600d73691210",
+  "date": "2026-11-07"
  },
  "/au/brisbane/route-230": {
-  "hash": "ba68bf8dd3a57ab6",
-  "date": "2026-11-04"
+  "hash": "dc04a1969286806b",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-380": {
-  "hash": "7163a25bab443aad",
-  "date": "2026-11-04"
+  "hash": "034e552ec7fb4fa9",
+  "date": "2026-11-09"
  },
  "/au/adelaide/route-501": {
-  "hash": "61b23434d07ca6e8",
-  "date": "2026-11-04"
+  "hash": "2b4c34fa18fa77c2",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-443": {
-  "hash": "eec0bc51d0424673",
-  "date": "2026-11-04"
+  "hash": "6a0a011e93c9952b",
+  "date": "2026-11-09"
  },
  "/au/adelaide/route-252": {
-  "hash": "ed092ec8c8aa6e5f",
-  "date": "2026-11-04"
+  "hash": "c32267ca14faea8f",
+  "date": "2026-11-09"
  },
  "/au/adelaide/route-288": {
-  "hash": "234e390c1b887f73",
-  "date": "2026-11-04"
+  "hash": "a6707ae0f6e58c92",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-201": {
-  "hash": "279481511f1737b1",
-  "date": "2026-11-04"
+  "hash": "323bb31e8978ffa0",
+  "date": "2026-11-07"
  },
  "/au/brisbane/route-372": {
-  "hash": "c7a2d9f7201dca4c",
-  "date": "2026-11-04"
+  "hash": "51e4dbb18b3b0ca8",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-212": {
-  "hash": "0c56c2007cfbf39f",
-  "date": "2026-11-04"
+  "hash": "2a2928cca17e092d",
+  "date": "2026-11-09"
  },
  "/au/adelaide/route-405": {
   "hash": "1d202df0d78880cb",
   "date": "2026-11-04"
  },
  "/au/adelaide/route-839": {
-  "hash": "b605dfe7b77db1c2",
-  "date": "2026-11-04"
+  "hash": "541c5cf020194eb8",
+  "date": "2026-11-07"
  },
  "/au/brisbane/route-430": {
-  "hash": "497211ce3afc0905",
-  "date": "2026-11-04"
+  "hash": "690ff62640e95ade",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-322": {
-  "hash": "bfbf80b3f75dd3cf",
-  "date": "2026-11-04"
+  "hash": "07e8aa47050a5c46",
+  "date": "2026-11-07"
  },
  "/au/brisbane/route-381": {
-  "hash": "f7560016839da805",
-  "date": "2026-11-04"
+  "hash": "9b0d46885f1f8232",
+  "date": "2026-11-09"
  },
  "/us/phoenix/route-27": {
   "hash": "d291a597bd9caf8c",
   "date": "2026-11-04"
  },
  "/au/brisbane/route-357": {
-  "hash": "08e133449105c298",
-  "date": "2026-11-04"
+  "hash": "b6cefac11cc9b3a8",
+  "date": "2026-11-07"
  },
  "/au/adelaide/route-239": {
-  "hash": "61f8d86e0d11aee4",
-  "date": "2026-11-04"
+  "hash": "588d5c42b42ff09c",
+  "date": "2026-11-07"
  },
  "/au/brisbane/route-747": {
-  "hash": "63fcb98fc5c4ef43",
-  "date": "2026-11-04"
+  "hash": "d96b90c57954a047",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-425": {
-  "hash": "154344950874d8b0",
-  "date": "2026-11-04"
+  "hash": "ddee3fda9aae034f",
+  "date": "2026-11-09"
  },
  "/au/adelaide/route-404": {
   "hash": "6356202726957348",
   "date": "2026-11-04"
  },
  "/au/brisbane/route-375": {
-  "hash": "40d923c9767ef511",
-  "date": "2026-11-04"
+  "hash": "817155e28f9fb884",
+  "date": "2026-11-09"
  },
  "/au/adelaide/route-110": {
-  "hash": "db10b21b3d37ec51",
-  "date": "2026-11-04"
+  "hash": "1504a64bb896c364",
+  "date": "2026-11-07"
  },
  "/au/brisbane/route-224": {
   "hash": "63072166d413bcf3",
@@ -352,51 +352,555 @@
   "date": "2026-11-04"
  },
  "/au/brisbane/route-741": {
-  "hash": "fb27d4a0cab3bf46",
-  "date": "2026-11-04"
+  "hash": "ec1e235e3fd40b98",
+  "date": "2026-11-09"
  },
  "/au/brisbane/route-539": {
-  "hash": "ba3facfa62196c93",
-  "date": "2026-11-04"
+  "hash": "fc8d85f92a699b2c",
+  "date": "2026-11-07"
  },
  "/us/phoenix": {
-  "hash": "9fd30d62dd4e7251",
-  "date": "2026-11-04"
+  "hash": "6491df7b2f507633",
+  "date": "2026-11-09"
  },
  "/au/brisbane": {
-  "hash": "59d525ab12880b67",
-  "date": "2026-11-04"
+  "hash": "fb95fa90e1997647",
+  "date": "2026-11-09"
  },
  "/au/vline-coaches": {
-  "hash": "0517500cd8d71552",
-  "date": "2026-11-04"
+  "hash": "46ea8eea8a2701b3",
+  "date": "2026-11-09"
  },
  "/au/victoria-regional-buses": {
-  "hash": "297129be77fe84f6",
-  "date": "2026-11-04"
+  "hash": "1902c8b919bd0672",
+  "date": "2026-11-09"
  },
  "/au/adelaide": {
-  "hash": "ff938134651cf15c",
-  "date": "2026-11-04"
+  "hash": "90309685734fe705",
+  "date": "2026-11-09"
  },
  "/au/melbourne-trams": {
-  "hash": "e56784f0ac7eff32",
-  "date": "2026-11-04"
+  "hash": "824f7c59b58e3663",
+  "date": "2026-11-09"
  },
  "/au/canberra-light-rail": {
-  "hash": "a4eee4198e8e1187",
-  "date": "2026-11-04"
+  "hash": "fd1b820faaa432cd",
+  "date": "2026-11-07"
  },
  "/au/melbourne-buses": {
-  "hash": "555f78474fb16176",
-  "date": "2026-11-04"
+  "hash": "5c8aee6568c7d8d9",
+  "date": "2026-11-09"
  },
  "/au/vline-trains": {
-  "hash": "fa460c4c9931e458",
-  "date": "2026-11-04"
+  "hash": "658cac18a4599837",
+  "date": "2026-11-07"
  },
  "/au/melbourne-trains": {
-  "hash": "0bc4f4037024448c",
-  "date": "2026-11-04"
+  "hash": "0402810102888c55",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/from/brisbane/to/nambour": {
+  "hash": "235dd6ddc488b638",
+  "date": "2026-11-07"
+ },
+ "/au/melbourne-trams/from/burwood-east/to/melbourne": {
+  "hash": "b88ffee8a80c261a",
+  "date": "2026-11-07"
+ },
+ "/au/vline-trains/from/dandenong/to/morwell": {
+  "hash": "ad7aa274b315210a",
+  "date": "2026-11-07"
+ },
+ "/au/vline-coaches/from/heathcote/to/melbourne": {
+  "hash": "8ecce210ce70b249",
+  "date": "2026-11-07"
+ },
+ "/au/vline-trains/from/melbourne/to/pyramid-hill": {
+  "hash": "7934534ed6382753",
+  "date": "2026-11-07"
+ },
+ "/au/vline-coaches/from/wangaratta/to/beechworth": {
+  "hash": "f013e6a87cb98e50",
+  "date": "2026-11-07"
+ },
+ "/au/adelaide/from/adelaide/to/munno-para": {
+  "hash": "b87b07e337a9cf47",
+  "date": "2026-11-07"
+ },
+ "/au/victoria-regional-buses/from/koroit/to/warrnambool": {
+  "hash": "33d46d0271ba03a2",
+  "date": "2026-11-07"
+ },
+ "/au/vline-coaches/from/nhill/to/horsham": {
+  "hash": "6dc26e1710bb3197",
+  "date": "2026-11-07"
+ },
+ "/au/vline-coaches/from/cranbourne/to/san-remo": {
+  "hash": "6a1d37494d0833c2",
+  "date": "2026-11-07"
+ },
+ "/au/melbourne-trams/stop/19340": {
+  "hash": "cb737c7af9cf2004",
+  "date": "2026-11-07"
+ },
+ "/au/vline-coaches/from/cohuna/to/east-albury": {
+  "hash": "506fc9f2eb4b4094",
+  "date": "2026-11-07"
+ },
+ "/us/phoenix/stop/14631": {
+  "hash": "022def22ce01d8a4",
+  "date": "2026-11-07"
+ },
+ "/us/phoenix/stop/10019": {
+  "hash": "b03354c3c47ea8ad",
+  "date": "2026-11-07"
+ },
+ "/au/canberra-light-rail/stop/8123": {
+  "hash": "d1db0e0e23d7788e",
+  "date": "2026-11-07"
+ },
+ "/us/phoenix/stop/13472": {
+  "hash": "6df98cbd0b75bf3a",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/route-354": {
+  "hash": "c7ff0b5454d5cb30",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/route-267": {
+  "hash": "4099b7a713a95220",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-140": {
+  "hash": "2a2b01ba88d43e64",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-209f": {
+  "hash": "271dbf1949c3c5cd",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-367": {
+  "hash": "e70bdcfda453b54b",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/route-378": {
+  "hash": "4cf65a00b7356416",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-820": {
+  "hash": "3a6eca750e8d25e2",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-565": {
+  "hash": "36ef6c7429a297f4",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/route-753": {
+  "hash": "e1e93e8f164e34c4",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/route-435": {
+  "hash": "448de51230f6f499",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-379": {
+  "hash": "40f5169a0de651ab",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-361": {
+  "hash": "7eeeeb72f29916f5",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-144": {
+  "hash": "64e7aebc500e12d0",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-861": {
+  "hash": "f69be231b9f2f704",
+  "date": "2026-11-09"
+ },
+ "/us/phoenix/route-70": {
+  "hash": "284c589e95ecc319",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/route-352": {
+  "hash": "1d67728dc054096c",
+  "date": "2026-11-07"
+ },
+ "/au/adelaide/route-852": {
+  "hash": "1e5b2fe2783f8d68",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/route-353": {
+  "hash": "77933c37e676ad43",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-h32": {
+  "hash": "9391fb2bd04e8e2a",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/route-24-ballarat-station-sebastopol": {
+  "hash": "bed04780dd53d9c5",
+  "date": "2026-11-09"
+ },
+ "/us/phoenix/route-29": {
+  "hash": "fb997683d28d40da",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-346": {
+  "hash": "99d1107147dbfa02",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-608": {
+  "hash": "bb60cc5baae8a217",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/route-fgbr": {
+  "hash": "eaace160d4801980",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/route-191": {
+  "hash": "6a4ae4a6c9199349",
+  "date": "2026-11-07"
+ },
+ "/au/melbourne-trams/route-19": {
+  "hash": "67f336a0242ea9f9",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-281k": {
+  "hash": "7d837131e85cbda7",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-170": {
+  "hash": "d822a9edf2c9b173",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-112": {
+  "hash": "2f61ffb3031d3fbf",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-757": {
+  "hash": "67c241e7c57e5c2b",
+  "date": "2026-11-07"
+ },
+ "/au/adelaide/route-866": {
+  "hash": "cc21e635db6b4bfd",
+  "date": "2026-11-07"
+ },
+ "/au/adelaide/route-543": {
+  "hash": "04e8e67493afd97e",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/route-373": {
+  "hash": "ed8c9580b0d9ea5f",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-570": {
+  "hash": "8339d73e049be6d7",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/route-426": {
+  "hash": "5cdc4dd858c43e82",
+  "date": "2026-11-09"
+ },
+ "/us/phoenix/route-571": {
+  "hash": "a2110610e261fe49",
+  "date": "2026-11-07"
+ },
+ "/us/phoenix/route-533": {
+  "hash": "c33b95fb7233e4e5",
+  "date": "2026-11-07"
+ },
+ "/au/vline-coaches/from/bairnsdale/to/narooma": {
+  "hash": "13842541cdeb4400",
+  "date": "2026-11-07"
+ },
+ "/au/victoria-regional-buses/from/rutherglen/to/wodonga": {
+  "hash": "3e7dd68348d3938c",
+  "date": "2026-11-07"
+ },
+ "/au/vline-coaches/from/adelaide/to/swan-hill": {
+  "hash": "a8fd6d14e5264948",
+  "date": "2026-11-07"
+ },
+ "/us/phoenix/stop/11473": {
+  "hash": "4bfdddba195aef5f",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/route-114": {
+  "hash": "1dc964c85697747b",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/route-349": {
+  "hash": "2e593ea0546b24e8",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-559s": {
+  "hash": "86b91a4abce75efe",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-382": {
+  "hash": "693adf2bf2780ceb",
+  "date": "2026-11-09"
+ },
+ "/au/vline-coaches/from/ballarat/to/maldon": {
+  "hash": "c058421e665eac6c",
+  "date": "2026-11-07"
+ },
+ "/au/victoria-regional-buses/from/creswick/to/clunes": {
+  "hash": "a33a98af88168a26",
+  "date": "2026-11-07"
+ },
+ "/au/brisbane/from/north-ipswich/to/coominya": {
+  "hash": "3078b82c289320f4",
+  "date": "2026-11-09"
+ },
+ "/au/vline-coaches/from/deniliquin/to/melbourne": {
+  "hash": "b18fe422ce5917c9",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/from/goodna/to/caboolture": {
+  "hash": "9803a9e4a11ddce3",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/from/adelaide/to/uraidla": {
+  "hash": "e554e60867ec1a81",
+  "date": "2026-11-09"
+ },
+ "/au/victoria-regional-buses/from/kyneton/to/trentham": {
+  "hash": "0688272c6d5a9f47",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/stop/12435": {
+  "hash": "19dfdfcb6f828eb0",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/from/melbourne-airport/to/dandenong": {
+  "hash": "319dba370ca32fc3",
+  "date": "2026-11-09"
+ },
+ "/au/vline-coaches/from/melbourne/to/nyora": {
+  "hash": "4028c9cd184077bf",
+  "date": "2026-11-09"
+ },
+ "/us/phoenix/stop/16319": {
+  "hash": "9711e395639931d8",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/from/alderley/to/brisbane": {
+  "hash": "54d1f4abd99e60b6",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/from/lovely-banks/to/geelong": {
+  "hash": "e9c2a5bbc40811b3",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/stop/011039": {
+  "hash": "6ff69e5c149be12b",
+  "date": "2026-11-09"
+ },
+ "/us/phoenix/stop/18961": {
+  "hash": "2f787f248827dff1",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-trains/from/melbourne/to/clayton": {
+  "hash": "0a1e8d055014ce54",
+  "date": "2026-11-09"
+ },
+ "/au/victoria-regional-buses/from/longford/to/sale": {
+  "hash": "e03378266c0fcd4c",
+  "date": "2026-11-09"
+ },
+ "/us/phoenix/stop/13251": {
+  "hash": "4080d43d75692b35",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/stop/16259": {
+  "hash": "607a7df010a1d95f",
+  "date": "2026-11-09"
+ },
+ "/au/vline-coaches/from/sale/to/traralgon": {
+  "hash": "7aecc3da8125d185",
+  "date": "2026-11-09"
+ },
+ "/au/vline-coaches/from/kerang/to/swan-hill": {
+  "hash": "2900cf9270c3f4ac",
+  "date": "2026-11-09"
+ },
+ "/us/phoenix/stop/15408": {
+  "hash": "8c03e0dbb219148e",
+  "date": "2026-11-09"
+ },
+ "/us/phoenix/stop/16429": {
+  "hash": "ef183b2c6aa152f2",
+  "date": "2026-11-09"
+ },
+ "/us/phoenix/stop/11998": {
+  "hash": "32a9ac5860e6d37b",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/from/melbourne/to/black-rock": {
+  "hash": "8c3e9177b4ce74ae",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/from/edwardstown/to/happy-valley": {
+  "hash": "b9623eb05f1c17c0",
+  "date": "2026-11-09"
+ },
+ "/us/phoenix/from/goodyear/to/phoenix": {
+  "hash": "e34016d7c4fa569c",
+  "date": "2026-11-09"
+ },
+ "/au/victoria-regional-buses/from/rhyll/to/cowes": {
+  "hash": "1760c8d173ec4154",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-364": {
+  "hash": "5ecf12b228fac6cc",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-377": {
+  "hash": "3b9788251101cce8",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-722": {
+  "hash": "5236e9381251fe6b",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-416": {
+  "hash": "887b106291656133",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-trams/route-86": {
+  "hash": "0f02a020c4822bcf",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-737": {
+  "hash": "6fc9594acb81d835",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-764": {
+  "hash": "49cee3485abcac49",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/route-15-moe-newborough-via-dinwoodie-dr": {
+  "hash": "c0fbcb89d95b7a74",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/route-43-traralgon-east": {
+  "hash": "6beeaefdfa0f36b1",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/route-25-ballarat-station-delacombe": {
+  "hash": "65518c0dedcff17b",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-trams/route-6": {
+  "hash": "d93d40af08072bfa",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-734a": {
+  "hash": "087e56ee6dab5178",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-trams/route-96": {
+  "hash": "23265a6151cc5ad8",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-f11": {
+  "hash": "b56068b315b0a81f",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-431": {
+  "hash": "5893ef470925b864",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/route-612": {
+  "hash": "f84c604c875a5dee",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/route-812": {
+  "hash": "84dee8fc4f6a37af",
+  "date": "2026-11-09"
+ },
+ "/us/phoenix/route-60": {
+  "hash": "fcbbb009826761dc",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-144g": {
+  "hash": "407de8d318117f5a",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/route-624": {
+  "hash": "3a79f3a0ff40b02e",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-333": {
+  "hash": "33a8003fc4159f14",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-99c": {
+  "hash": "dae10cc3836dbd90",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-m2": {
+  "hash": "ca51a5020b2a8b32",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-640": {
+  "hash": "f7ddccf46cde758d",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-720a": {
+  "hash": "785e9f56a4475af2",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-579": {
+  "hash": "b9f5ee5820394cdc",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-trams/route-59": {
+  "hash": "73d118e4133e9e04",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-228": {
+  "hash": "3f44e21992928d33",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-655": {
+  "hash": "d083049af10df4a0",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-821": {
+  "hash": "3fd7481ce07c27e8",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-r348": {
+  "hash": "57b4a81bd5a2ba29",
+  "date": "2026-11-09"
+ },
+ "/au/adelaide/route-253x": {
+  "hash": "e96c613454cfab31",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/route-816": {
+  "hash": "93f2eaed7f0221e1",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-699": {
+  "hash": "be9c76463a9f27c8",
+  "date": "2026-11-09"
+ },
+ "/au/melbourne-buses/route-887": {
+  "hash": "8f4447d3b5691218",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-452": {
+  "hash": "544a90b34c56bbc9",
+  "date": "2026-11-09"
+ },
+ "/au/brisbane/route-fgbn": {
+  "hash": "5d3ee066b83b64e9",
+  "date": "2026-11-09"
  }
 }

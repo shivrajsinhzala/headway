@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /data/
-Disallow: /search
 
 Sitemap: https://headway.shivrajsinh.in/sitemap.xml

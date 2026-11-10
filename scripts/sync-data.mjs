@@ -23,10 +23,10 @@ const TODAY = process.env.TODAY || new Date().toISOString().slice(0, 10);
 const CAPS = { route: Math.round(LIMIT * 0.62), journey: Math.round(LIMIT * 0.22), stop: Math.round(LIMIT * 0.1) };
 const IN_SCOPE = /^(au\/|us\/phoenix$)/;
 
-// Same floors as Stopwatch's indexing rules: thin pages are what Google rejected there.
-const MIN_ROUTE_TRIPS = 8; // busiest day, both directions together
+// Keep sparse pages out, but retain useful lower-frequency routes and trips with proven search demand.
+const MIN_ROUTE_TRIPS = 6; // busiest day, both directions together
 const MIN_STOP_TRIPS = 12; // busiest day, all routes together
-const THIN_WEEKLY = 10;
+const THIN_WEEKLY = 5;
 const MIN_KM = 5;
 const MAX_VARIANT_TRIPS = 4;
 
@@ -100,7 +100,7 @@ function eligible(r) {
   if (r.parts[2] !== 'from' || r.parts[4] !== 'to' || !n.journeys) return null;
   const a = n.placeIndex.get(from), b = n.placeIndex.get(to);
   const pair = n.journeys.pairs.find((p) => p.a === a && p.b === b);
-  if (!pair || !(pair.weekly > THIN_WEEKLY && pair.km >= MIN_KM)) return null;
+  if (!pair || !(pair.weekly >= THIN_WEEKLY && pair.km >= MIN_KM)) return null;
   return { type: 'journey', from, to, pair };
 }
 

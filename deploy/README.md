@@ -31,7 +31,7 @@ deploy/deploy.sh
 ## Every release
 
 ```bash
-npm run sync
+PAGES=160 npm run sync
 ```
 
 ```bash

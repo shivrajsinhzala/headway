@@ -5,7 +5,8 @@ import Badge from '../../../components/Badge.astro';
 import Crumbs from '../../../components/Crumbs.astro';
 import Faq from '../../../components/Faq.astro';
 import Plate from '../../../components/Plate.astro';
-import { pages, byUrl, crumbsLd, faqLd, sourceLine, place, toward, dayPhrase, routeLabel, cap } from '../../../lib/site.js';
+import Source from '../../../components/Source.astro';
+import { SITE, pages, byUrl, crumbsLd, place, toward, dayPhrase, routeLabel, cap } from '../../../lib/site.js';
 import { routeView } from '../../../lib/route.js';
 import { fmt, gridHtml, span } from '../../../lib/time.js';
 
@@ -30,20 +31,45 @@ const clientData = {
 const seen = (stops) => stops.filter((s, i, a) => s.hasTimes && a.findIndex((o) => o.code === s.code) === i);
 const related = p.related.map((u) => byUrl.get(u));
 const journeys = p.journeys.map((u) => byUrl.get(u));
+const datasetLd = {
+  '@context': 'https://schema.org', '@type': 'Dataset', '@id': `${SITE}${p.url}#timetable`,
+  name: x.h1, description: x.description, url: `${SITE}${p.url}`, dateModified: p.lastmod,
+  license: sys.attribution.licenseUrl, isAccessibleForFree: true,
+  creator: { '@type': 'Organization', name: sys.attribution.text, url: sys.attribution.url },
+  spatialCoverage: { '@type': 'Place', name: sys.area },
+  ...(sys.feed?.from && sys.feed?.to ? { temporalCoverage: `${sys.feed.from}/${sys.feed.to}` } : {}),
+  distribution: { '@type': 'DataDownload', contentUrl: `${SITE}${p.dataUrl}`, encodingFormat: 'application/json' },
+};
 ---
-<Base title={x.title} description={x.description} path={p.url} operator={sys.name} jsonld={[crumbsLd(crumbs), faqLd(x.faq)]}>
-  <section slot="hero" class="container hero">
+<Base title={x.title} description={x.description} path={p.url} modified={p.lastmod} operator={sys.name} jsonld={[crumbsLd(crumbs), datasetLd]}>
+  <section slot="hero" class="container hero route-hero">
     <div class="hero-text">
       <Crumbs items={crumbs} />
       <h1>{x.h1}</h1>
       <p class="lede">{x.lede}</p>
+      <p class="section-note route-facts">{x.facts.join(' · ')}</p>
+      <nav class="section-links" aria-label="On this route page">
+        <a href="#times">Timetable</a><a href="#frequency">Frequency</a><a href="#gaps">Long gaps</a><a href="#stops">Stops</a>
+        {x.officialUrl && <a href={x.officialUrl}>Official route, alerts and fares</a>}
+      </nav>
     </div>
     <div class:list={['hero-side', !p.shape && 'solo']}>
       <div class="card-next" data-next aria-live="polite">
         <p class="next-label" data-next-label>First from {x.a}, {dayPhrase(x.openDay.label)}</p>
         <p class="next-time" data-next-time>{x.openT.length ? fmt(x.openT[0]) : ''}</p>
         <p class="next-more" data-next-more>{x.openT.length ? `last ${fmt(x.openT.at(-1))}` : ''}</p>
-        <p class="next-note" data-next-note>Worked out from the {word}, not live.</p>
+        <p class="next-note" data-next-note>Scheduled, not live. Times use the network’s local time.</p>
+        <label class="picker hero-picker" data-picker hidden>
+          <span>Your stop and direction</span>
+          <select data-hero-stop-select>
+            {p.dirs.map((d, i) => (
+              <optgroup label={`To ${toward(d)}`}>
+                {seen(d.stops).map((s) => <option value={`${i}:${s.code}`} selected={i === 0 && s.code === d.firstCode}>{s.name}</option>)}
+              </optgroup>
+            ))}
+          </select>
+        </label>
+        <a class="hero-times-link" href="#times">See the full {word}</a>
       </div>
       <Plate shape={p.shape} label={`The real path of ${x.label}, from ${x.a} to ${x.b}. The coral dot marks ${x.a}.`} />
     </div>
@@ -73,19 +99,20 @@ const journeys = p.journeys.map((u) => byUrl.get(u));
                 {seen(d.stops).map((s) => <option value={s.code} selected={s.code === d.firstCode}>{s.name}</option>)}
               </select>
             </label>
-            <p class="sheet-note" data-sheet-note></p>
+            <p class="sheet-note" data-sheet-note aria-live="polite"></p>
             <div class="grid-slot" data-grid set:html={gridHtml(p.days, d.first, vs)} />
           </div>
         ))}
       </div>
     </div>
-    <Ad kind="rail" />
+    <Ad kind="rail" slot="1697297769" />
   </div>
 
-  <Ad />
+  <!-- Primary In-Content Ad right after the timetable for high viewability -->
+  <Ad kind="mid" slot="9765370376" />
 
   <section class="two">
-    <div>
+    <div id="frequency">
       <h2 class="section-title">How often it runs</h2>
       <table class="freq">
         <thead><tr><th scope="col">{cap(dayPhrase(x.busy.label))}</th>{x.dirCols.map((d) => <th scope="col">To {toward(d)}</th>)}</tr></thead>
@@ -97,7 +124,7 @@ const journeys = p.journeys.map((u) => byUrl.get(u));
         </tbody>
       </table>
     </div>
-    <div>
+    <div id="gaps">
       <h2 class="section-title">When to watch out</h2>
       <div class="watch">{x.watch.map((w) => <p>{w}</p>)}</div>
       {x.bars.length > 1 && (
@@ -146,8 +173,6 @@ const journeys = p.journeys.map((u) => byUrl.get(u));
 
   <Faq faq={x.faq} title={`Questions about the ${x.ref}`} />
 
-  <Ad />
-
   {related.length > 0 && (
     <section>
       <h2 class="section-title">{p.relatedShare ? 'Routes that share these stops' : `More ${sys.name} routes`}</h2>
@@ -166,7 +191,7 @@ const journeys = p.journeys.map((u) => byUrl.get(u));
     </section>
   )}
 
-  <p class="source">{sourceLine(sys)}</p>
+  <Source sys={sys} path={p.url} />
 
   <script type="application/json" id="page-data" set:html={JSON.stringify(clientData).replace(/</g, '\\u003c')} />
   <script>import '../../../scripts/route.js';</script>

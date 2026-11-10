@@ -3,6 +3,7 @@ import Base from '../../../layouts/Base.astro';
 import Ad from '../../../components/Ad.astro';
 import Badge from '../../../components/Badge.astro';
 import Crumbs from '../../../components/Crumbs.astro';
+import Source from '../../../components/Source.astro';
 import { systems, inNetwork, hubIndexed, byDemand, crumbsLd, tWord, weekdayRange, routeLabel, longDate, fit, modeFor, cap, place } from '../../../lib/site.js';
 
 export function getStaticPaths() {
@@ -23,12 +24,17 @@ const title = fit(60, `${h1}: routes, stops and times`, h1);
 const description = fit(160, `${h1}: full day by hour, first and last ${mode} times and every stop for the routes people look up most in ${sys.area}.`, `${h1}: first and last times and every stop for the most looked-up routes.`, h1);
 const crumbs = [{ name: 'Home', href: '/' }, { name: sys.name }];
 ---
-<Base title={title} description={description} path={sys.url} operator={sys.name} noindex={!hubIndexed(sys.key)} jsonld={[crumbsLd(crumbs)]}>
+<Base title={title} description={description} path={sys.url} modified={sys.lastmod} pageType="CollectionPage" operator={sys.name} noindex={!hubIndexed(sys.key)} jsonld={[crumbsLd(crumbs)]}>
   <section slot="hero" class="container hero">
     <div class="hero-text">
       <Crumbs items={crumbs} />
       <h1>{h1}</h1>
       <p class="lede">{lede} {covers}</p>
+      <form class="find" action="/search" method="get" role="search">
+        <label class="visually-hidden" for={`network-q-${sys.slug}`}>Find a route, stop or town in {sys.name}</label>
+        <input id={`network-q-${sys.slug}`} name="q" type="search" placeholder={`Route, stop or town in ${sys.name}`} />
+        <button type="submit">Find times</button>
+      </form>
     </div>
   </section>
 
@@ -43,7 +49,7 @@ const crumbs = [{ name: 'Home', href: '/' }, { name: sys.name }];
             return (
               <tr>
                 <td><Badge color={r.color} text={r.short || routeLabel(r)} href={r.url} /></td>
-                <td><a href={r.url}>{r.name.replace(/\s+-\s+/g, ' to ')}</a></td>
+                <td><a href={r.url}>{r.name.replace(/\s+-\s+/g, ' to ')} {word}</a></td>
                 <td class="r">{w?.first || 'none'}</td><td class="r">{w?.last || 'none'}</td>
               </tr>
             );
@@ -79,4 +85,6 @@ const crumbs = [{ name: 'Home', href: '/' }, { name: sys.name }];
       <p>Headway shows the published {word}, not where a vehicle is right now. For cancellations, detours and fares, check {sys.name} directly.</p>
     </div>
   </section>
+
+  <Source sys={sys} path={sys.url} />
 </Base>

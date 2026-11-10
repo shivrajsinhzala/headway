@@ -5,7 +5,8 @@ import Badge from '../../../../../../components/Badge.astro';
 import Crumbs from '../../../../../../components/Crumbs.astro';
 import Faq from '../../../../../../components/Faq.astro';
 import Plate from '../../../../../../components/Plate.astro';
-import { pages, byUrl, systems, crumbsLd, faqLd, sourceLine, tWord, modeFor, vehicleFor, pluralOf, fit, dayPhrase, cap, routeLabel, shortDate, median } from '../../../../../../lib/site.js';
+import Source from '../../../../../../components/Source.astro';
+import { pages, byUrl, systems, crumbsLd, tWord, modeFor, vehicleFor, pluralOf, fit, dayPhrase, cap, routeLabel, shortDate, median } from '../../../../../../lib/site.js';
 import { fmt, span, gridHtml } from '../../../../../../lib/time.js';
 
 export function getStaticPaths() {
@@ -42,9 +43,12 @@ const manyRoutes = p.routes.length > 1;
 const namedRoute = /\d/.test(routeLabel(p.routes[0])) ? `${routeLabel(p.routes[0])} ` : '';
 const direct = manyRoutes ? `Direct ${vs} on ${p.routes.length} routes run` : `A direct ${namedRoute}${v} runs`;
 const lede = `${direct} ${main.n} ${main.n === 1 ? 'time' : 'times'} on ${dayPhrase(main.label)}${days[1] ? ` and ${days[1].n} on ${dayPhrase(days[1].label)}` : ''}. The trip takes about ${span(typical)}.`;
-const title = fit(60, `${h1} ${word} and times`, `${h1} ${word}`, h1);
+const title = fit(52, `${A} to ${B} ${cap(mode)} Times & ${cap(word)}`, `${A} to ${B} ${cap(mode)} Times`, h1);
+const weekend = days.filter((d) => d.days.some((n) => n === 5 || n === 6)).map((d) => `${d.label}: ${d.n}`).join('; ');
+const directCount = `${main.n} direct ${main.n === 1 ? 'departure' : 'departures'}`;
 const description = fit(160,
-  `${h1}: ${main.n} direct departures on ${dayPhrase(main.label)}, about ${span(typical)}. First ${fmt(main.first)}, last ${fmt(main.last)}. Full ${word} and where to board.`,
+  `${h1}: ${directCount} on ${dayPhrase(main.label)}, about ${span(typical)}. First ${fmt(main.first)}, last ${fmt(main.last)}.${weekend ? ` ${weekend}.` : ''} See where to board.`,
+  `${h1}: ${directCount}, about ${span(typical)}. First ${fmt(main.first)}, last ${fmt(main.last)}. Full ${word}.`,
   `${h1}: about ${span(typical)}. First ${fmt(main.first)}, last ${fmt(main.last)}. Full ${word}.`,
   `${h1}. Full ${word}.`);
 const crumbs = [{ name: 'Home', href: '/' }, { name: sys.name, href: sys.url }, { name: `${A} to ${B}` }];
@@ -79,7 +83,7 @@ const clientData = {
 const reverse = p.reverse && byUrl.get(p.reverse);
 const others = pages.filter((o) => o.type === 'journey' && o.key === p.key && o !== p && o !== reverse).sort((a, b) => b.peak.impr - a.peak.impr).slice(0, 6);
 ---
-<Base title={title} description={description} path={p.url} operator={sys.name} jsonld={[crumbsLd(crumbs), faqLd(faq)]}>
+<Base title={title} description={description} path={p.url} modified={p.lastmod} operator={sys.name} jsonld={[crumbsLd(crumbs)]}>
   <section slot="hero" class="container hero">
     <div class="hero-text">
       <Crumbs items={crumbs} />
@@ -134,6 +138,7 @@ const others = pages.filter((o) => o.type === 'journey' && o.key === p.key && o 
       <h2 class="section-title">Where to catch it</h2>
       <p class="watch">Board at {boards.slice(0, 4).map((c, i) => <>{i > 0 && (i === Math.min(boards.length, 4) - 1 ? ' or ' : ', ')}{stopLink(c) ? <a href={stopLink(c)}>{p.stopNames[c]}</a> : p.stopNames[c]}</>)}.</p>
       <p>Times to {B} are for {alights.slice(0, 3).map((c, i) => <>{i > 0 && (i === Math.min(alights.length, 3) - 1 ? ' or ' : ', ')}{p.stopNames[c]}</>)}. The {v} may go on from there, so check your stop if you are heading further along.</p>
+      {!manyRoutes && routeRows[0]?.url && <p>See the <a href={routeRows[0].url}>{routeRows[0].name} {word}</a> for every stop and the whole day.</p>}
       {reverse && <p>Going the other way? <a href={reverse.url}>{reverse.fromName} to {reverse.toName}</a>.</p>}
       {p.exceptions.length > 0 && (
         <>
@@ -159,7 +164,7 @@ const others = pages.filter((o) => o.type === 'journey' && o.key === p.key && o 
           {routeRows.map((r) => (
             <tr>
               <td><Badge color={r.color} text={r.short || routeLabel(r)} href={r.url || undefined} /></td>
-              <td>{r.name}</td>
+              <td>{r.url ? <a href={r.url}>{r.name} {word}</a> : `${r.name} ${word}`}</td>
               <td class="r">{r.first != null ? fmt(r.first) : 'none'}</td><td class="r">{r.last != null ? fmt(r.last) : 'none'}</td><td class="r col-wide">{r.n}</td>
             </tr>
           ))}
@@ -170,8 +175,6 @@ const others = pages.filter((o) => o.type === 'journey' && o.key === p.key && o 
 
   <Faq faq={faq} title="Questions about this trip" />
 
-  <Ad />
-
   {others.length > 0 && (
     <section>
       <h2 class="section-title">More trips on {sys.name}</h2>
@@ -179,7 +182,7 @@ const others = pages.filter((o) => o.type === 'journey' && o.key === p.key && o 
     </section>
   )}
 
-  <p class="source">{sourceLine(sys)}</p>
+  <Source sys={sys} path={p.url} />
 
   <script type="application/json" id="page-data" set:html={JSON.stringify(clientData).replace(/</g, '\\u003c')} />
   <script>import '../../../../../../scripts/journey.js';</script>

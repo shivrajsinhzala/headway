@@ -5,11 +5,26 @@ import '../styles/global.css';
 import Logo from '../components/Logo.astro';
 import { SITE, inNetwork, systems } from '../lib/site.js';
 
-const { title, description, path = '', noindex = false, jsonld = [], operator = '', nav = false, ogType = 'website' } = Astro.props;
+const { title, description, path = '', noindex = false, jsonld = [], operator = '', nav = false, ogType = 'website', modified, pageType = 'WebPage' } = Astro.props;
 const canonical = `${SITE}${path === '/' ? '/' : path}`;
-const fullTitle = /headway/i.test(title) ? title : `${title} | Headway`;
+// The brand suffix only when the whole thing still fits a result line (~60 chars): the operator
+// and city at the end of a route title are what a rider scans for, and " | Headway" must not cut them off.
+const fullTitle = /headway/i.test(title) ? title : (title.length + 11 <= 60 ? `${title} | Headway` : title);
 const adsOn = import.meta.env.PUBLIC_ADS !== 'off';
 const ga = import.meta.env.PUBLIC_GA_ID;
+const ORG_ID = `${SITE}/#organization`;
+const SITE_ID = `${SITE}/#website`;
+const pageLd = {
+  '@context': 'https://schema.org', '@type': pageType, '@id': `${canonical}#webpage`,
+  url: canonical, name: fullTitle, description, inLanguage: 'en',
+  isPartOf: { '@id': SITE_ID }, publisher: { '@id': ORG_ID },
+  ...(modified ? { dateModified: modified } : {}),
+};
+const entityLd = [
+  { '@context': 'https://schema.org', '@type': 'WebSite', '@id': SITE_ID, name: 'Headway', url: `${SITE}/`, inLanguage: 'en', publisher: { '@id': ORG_ID }, potentialAction: { '@type': 'SearchAction', target: `${SITE}/search?q={q}`, 'query-input': 'required name=q' } },
+  { '@context': 'https://schema.org', '@type': 'Organization', '@id': ORG_ID, name: 'Headway', url: `${SITE}/`, logo: `${SITE}/favicon.svg`, email: 'zalashivraj2642003@gmail.com', founder: { '@type': 'Person', name: 'Shivrajsinh Zala', url: 'https://shivrajsinh.in' } },
+];
+const schema = [pageLd, ...jsonld, ...(path === '/' || path === '/about' ? entityLd : [])];
 const NAV = [['Brisbane', 'au/brisbane'], ['Adelaide', 'au/adelaide'], ['Melbourne', 'au/melbourne-buses'], ['Victoria', 'au/vline-coaches'], ['Phoenix', 'us/phoenix']].filter(([, k]) => systems[k] && inNetwork(k).length);
 ---
 <!doctype html>
@@ -31,13 +46,16 @@ const NAV = [['Brisbane', 'au/brisbane'], ['Adelaide', 'au/adelaide'], ['Melbour
   <meta property="og:url" content={canonical} />
   <meta property="og:image" content={`${SITE}/og.png`} />
   <meta name="twitter:card" content="summary_large_image" />
-  {jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={`${SITE}/og.png`} />
+  {schema.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
   {adsOn && <meta name="google-adsense-account" content="ca-pub-7164999486301748" />}
   {adsOn && <link rel="preconnect" href="https://pagead2.googlesyndication.com" />}
   {adsOn && <link rel="preconnect" href="https://googleads.g.doubleclick.net" crossorigin />}
-  {adsOn && <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7164999486301748" crossorigin="anonymous"></script>}
+  {adsOn && <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7164999486301748" crossorigin="anonymous"></script>}
   {ga && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga}`}></script>}
-  {ga && <script is:inline define:vars={{ ga }}>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config',ga);</script>}
+  {ga && <script is:inline define:vars={{ ga }}>window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments)};window.gtag('js',new Date());window.gtag('config',ga);</script>}
 </head>
 <body>
   <a class="skip" href="#content">Skip to the times</a>
@@ -47,9 +65,9 @@ const NAV = [['Brisbane', 'au/brisbane'], ['Adelaide', 'au/adelaide'], ['Melbour
       {nav ? (
         <nav class="top-nav" aria-label="Networks">{NAV.map(([name, k]) => <a href={`/${k}`}>{name}</a>)}</nav>
       ) : (
-        <form class="top-search" action="/search" method="get" role="search">
+        <form class="top-search" action="/search" method="get" role="search" aria-label="Find a route, stop or town">
           <label class="visually-hidden" for="top-q">Route, stop or town</label>
-          <input id="top-q" name="q" type="search" placeholder="Route, stop or town" />
+          <input id="top-q" name="q" type="search" autocomplete="off" placeholder="Route, stop or town…" />
           <button type="submit" aria-label="Search">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
           </button>
@@ -62,15 +80,38 @@ const NAV = [['Brisbane', 'au/brisbane'], ['Adelaide', 'au/adelaide'], ['Melbour
   <slot name="after" />
   <footer class="container foot">
     <p>Headway is independent and not affiliated with {operator || 'any operator'}. Times are published schedules, not live vehicle positions.</p>
-    <nav aria-label="About"><a href="/about">About</a><a href="/about#sources">Sources</a><a href="/privacy">Privacy</a></nav>
+    <nav aria-label="About"><a href="/about">About</a><a href="/about#sources">Sources</a><a href="/privacy">Privacy</a><a href="https://transit.shivrajsinh.in" target="_blank" rel="noopener">Stopwatch Timetables</a></nav>
   </footer>
-  <script>
-    // A push fills the first unprocessed slot in the page, hidden or not, so a slot this screen
-    // hides (the desktop rail on a phone) has to leave the page before any push runs.
-    const w = window;
-    const slots = [...document.querySelectorAll('ins.adsbygoogle')];
-    const shown = slots.filter((ins) => { if (ins.offsetWidth > 0) return true; ins.closest('.ad')?.remove(); return false; });
-    shown.forEach(() => (w.adsbygoogle = w.adsbygoogle || []).push({}));
-  </script>
+  {adsOn && <script is:inline>
+    (() => {
+      const fill = (ins) => {
+        if (!ins || ins.dataset.requested || !ins.offsetWidth) return false;
+        ins.dataset.requested = '1';
+        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch { /* adblock */ }
+        return true;
+      };
+
+      const setupSlots = () => {
+        const slots = [...document.querySelectorAll('ins.adsbygoogle:not([data-adsbygoogle-status])')];
+        if (!slots.length) return;
+        if (!('IntersectionObserver' in window)) {
+          slots.forEach(fill);
+          return;
+        }
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting && fill(e.target)) io.unobserve(e.target);
+          }
+        }, { rootMargin: '800px 0px' });
+        slots.forEach((ins) => io.observe(ins));
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupSlots, { once: true });
+      } else {
+        setupSlots();
+      }
+    })();
+  </script>}
 </body>
 </html>

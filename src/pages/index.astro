@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Ad from '../components/Ad.astro';
 import Badge from '../components/Badge.astro';
-import { SITE, pages, systems, byUrl, byDemand, weekdayRange, routeLabel, longDate, cityOf, inNetwork } from '../lib/site.js';
+import { pages, systems, byUrl, byDemand, weekdayRange, routeLabel, longDate, cityOf, inNetwork } from '../lib/site.js';
 import { hourLabel } from '../lib/time.js';
 
 const routes = pages.filter((p) => p.type === 'route').sort(byDemand);
@@ -20,21 +20,17 @@ const rows = Array.from({ length: 7 }, (_, i) => {
 const sampleSys = systems[sample.key];
 const networks = Object.values(systems).filter((s) => inNetwork(s.key).length).sort((a, b) => inNetwork(b.key).length - inNetwork(a.key).length);
 const top = routes.slice(0, 10);
-const title = 'Headway: bus, tram and train timetables for Australia and Phoenix';
-const description = 'The whole day by hour at any stop, first and last times and how often each route runs, for Australia and Phoenix. From official data, with no app.';
-const ld = [
-  { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Headway', url: `${SITE}/`, potentialAction: { '@type': 'SearchAction', target: `${SITE}/search?q={q}`, 'query-input': 'required name=q' } },
-  { '@context': 'https://schema.org', '@type': 'Organization', name: 'Headway', url: `${SITE}/`, logo: `${SITE}/favicon.svg`, email: 'zalashivraj2642003@gmail.com', founder: { '@type': 'Person', name: 'Shivrajsinh Zala', url: 'https://shivrajsinh.in' } },
-];
+const title = 'Headway: Australian bus, tram and train timetables';
+const description = 'Australian bus, tram and train timetables at your stop: first and last services, full days and printable schedules from official data. Phoenix included.';
 ---
-<Base title={title} description={description} path="/" nav jsonld={ld}>
+<Base title={title} description={description} path="/" nav>
   <section slot="hero" class="container hero home-hero">
     <div class="hero-text">
       <h1>Know when your bus leaves.</h1>
       <p class="lede">Full timetables for Australia and Phoenix, from official data, with no app.</p>
-      <form class="find" action="/search" method="get" role="search">
+      <form class="find" action="/search" method="get" role="search" aria-label="Find a route, stop or town">
         <label class="visually-hidden" for="home-q">Route, stop or town</label>
-        <input id="home-q" name="q" type="search" placeholder="Route, stop or town" />
+        <input id="home-q" name="q" type="search" autocomplete="off" placeholder="Route, stop or town…" />
         <button type="submit">Find times</button>
       </form>
     </div>
@@ -59,21 +55,24 @@ const ld = [
 
   <section>
     <h2 class="section-title">Routes people look up most</h2>
-    <table class="data">
-      <thead><tr><th scope="col">Route</th><th scope="col">Runs between</th><th scope="col" class="r">First weekday</th><th scope="col" class="r">Last weekday</th></tr></thead>
-      <tbody>
-        {top.map((r) => {
-          const w = weekdayRange(r);
-          return (
-            <tr>
-              <td><Badge color={r.color} text={r.short || routeLabel(r)} href={r.url} /></td>
-              <td><a href={r.url}>{r.name.replace(/\s+-\s+/g, ' to ')}</a>, {cityOf(systems[r.key])}</td>
-              <td class="r">{w?.first || 'none'}</td><td class="r">{w?.last || 'none'}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+    <p class="section-note table-hint">Scroll sideways to see first and last weekday times.</p>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Popular routes and weekday times">
+      <table class="data">
+        <thead><tr><th scope="col">Route</th><th scope="col">Runs between</th><th scope="col" class="r">First weekday</th><th scope="col" class="r">Last weekday</th></tr></thead>
+        <tbody>
+          {top.map((r) => {
+            const w = weekdayRange(r);
+            return (
+              <tr>
+                <td><Badge color={r.color} text={r.short || routeLabel(r)} href={r.url} /></td>
+                <td><a href={r.url}>{r.name.replace(/\s+-\s+/g, ' to ')}</a>, {cityOf(systems[r.key])}</td>
+                <td class="r">{w?.first || 'none'}</td><td class="r">{w?.last || 'none'}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <section slot="after" class="ink-band">

@@ -8,6 +8,19 @@ import path from 'node:path';
 
 const DIST = path.resolve(import.meta.dirname, '../dist');
 const SITE = 'https://headway.shivrajsinh.in';
+const OFFICIAL_ROUTES = new Map([
+  ['/au/adelaide/route-405', 'https://www.adelaidemetro.com.au/routes/405'],
+  ['/au/adelaide/route-839', 'https://www.adelaidemetro.com.au/routes/839'],
+  ['/au/adelaide/route-400', 'https://www.adelaidemetro.com.au/routes/400'],
+  ['/au/brisbane/route-390', 'https://jp.translink.com.au/plan-your-journey/timetables/bus/t/390'],
+  ['/au/brisbane/route-326', 'https://jp.translink.com.au/plan-your-journey/timetables/bus/t/326'],
+  ['/us/phoenix/route-3', 'https://www.valleymetro.org/maps-schedules/3'],
+]);
+const DESCRIPTIVE_LINKS = new Map([
+  ['/au/adelaide', '/au/adelaide/route-405">Salisbury to Paralowie Clockwise Loop timetable</a>'],
+  ['/au/brisbane', '/au/brisbane/route-390">Mitchelton to City timetable</a>'],
+  ['/us/phoenix/from/phoenix/to/tolleson', '/us/phoenix/route-3">Van Buren St schedule</a>'],
+]);
 
 const files = [];
 (function walk(dir) {
@@ -36,6 +49,8 @@ for (const f of files) {
   const desc = /<meta name="description" content="([^"]*)"/.exec(html)?.[1];
   if (!title) bad('no title');
   if (!desc) bad('no description');
+  for (const field of ['twitter:title', 'twitter:description', 'twitter:image']) if (!html.includes(`<meta name="${field}"`)) bad(`missing ${field}`);
+  if (html.includes('"@type":"FAQPage"')) bad('obsolete FAQPage schema');
   if (desc && desc.length > 170) bad(`description ${desc.length} chars`);
   if (title && title.length > 75) bad(`title ${title.length} chars: ${title}`);
   if ((html.match(/<h1[\s>]/g) || []).length !== 1) bad('not exactly one h1');
@@ -56,6 +71,11 @@ for (const f of files) {
   }
   const isRoute = /<div class="times-layout"/.test(html);
   if (isRoute && !html.includes('class="m"')) bad('route page with no times');
+  if (isRoute && !html.includes('<p class="section-note route-facts">')) bad('route page with no service facts');
+  const facts = /<p class="section-note route-facts">([^<]*)/.exec(html)?.[1];
+  if (facts && /and .* and/.test(facts)) bad(`awkward service-day summary: ${facts}`);
+  if (OFFICIAL_ROUTES.has(url) && !html.includes(`href="${OFFICIAL_ROUTES.get(url)}"`)) bad('missing official route link');
+  if (DESCRIPTIVE_LINKS.has(url) && !html.includes(`href="${DESCRIPTIVE_LINKS.get(url)}`)) bad('missing descriptive timetable link');
   if (!noindex) words.push([url, text.trim().split(/\s+/).length]);
 }
 

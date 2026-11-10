@@ -35,6 +35,12 @@ export function routeView(p) {
   const dirs = p.dirs;
   const main = dirs[0];
   const city = cityOf(sys);
+  const officialBase = {
+    'au/adelaide': 'https://www.adelaidemetro.com.au/routes/',
+    'au/brisbane': 'https://jp.translink.com.au/plan-your-journey/timetables/bus/t/',
+    'us/phoenix': 'https://www.valleymetro.org/maps-schedules/',
+  }[p.key];
+  const officialUrl = officialBase && /^\d+$/.test(p.short || '') ? `${officialBase}${p.short}` : null;
 
   /* ---------- names ---------- */
   const core = p.name.replace(/\s+-\s+/g, ' to ').replace(/\s+via\s+.*$/i, '').replace(/\s*\(.*\)$/, '').trim();
@@ -44,7 +50,26 @@ export function routeView(p) {
   const h1 = p.short
     ? hasEnds ? `${p.short} ${mode} ${word}: ${core}` : `${p.short} ${core} ${mode} ${word}`
     : `${core} ${mode} ${word}`;
-  const title = fit(60, sys.cc === 'us' ? `${h1}, ${city}` : h1, h1, `${p.short || core} ${mode} ${word}, ${city}`, `${ref} ${mode} ${word}`);
+  // Riders scan a result page for the operator and city; Stopwatch's best-clicked titles lead
+  // with them ("Phoenix Valley Metro Bus Route 7 Schedule: 7th St"). Drop "bus" before the
+  // city before dropping the city: "272 timetable: … (Brisbane)" still matches "272 bus timetable".
+  const op = sys.name;
+  const title = hasEnds
+    ? fit(60,
+        `${ref} ${cap(mode)} ${cap(word)}: ${core} (${city})`,
+        `${ref} ${cap(mode)} ${cap(word)} (${city}) | PDF`,
+        `${ref} ${cap(word)}: ${core} (${city})`,
+        `${ref} ${cap(mode)} ${cap(word)}: ${core}`)
+    : p.short
+      ? fit(60,
+          `${ref} ${cap(mode)} ${cap(word)}: ${core} (${city})`,
+          `${op} Route ${ref} ${cap(word)}: ${core}`,
+          `${ref} ${cap(mode)} ${cap(word)} (${city}) | PDF`,
+          `${ref} ${cap(mode)} ${cap(word)}: ${core}`)
+      : fit(60,
+          `${core} ${cap(mode)} ${cap(word)} (${city}) | PDF`,
+          `${core} ${cap(mode)} ${cap(word)} (${op})`,
+          `${core} ${cap(mode)} ${cap(word)}`);
 
   /* ---------- the opening answer ---------- */
   const a = place(main.firstName), b = place(main.lastName);
@@ -54,12 +79,15 @@ export function routeView(p) {
   const openDay = p.days.find((d) => main.first[d.key]?.length) || p.days[0];
   const openT = main.first[openDay.key] || [];
   const openSentence = openT.length ? `On ${dayPhrase(openDay.label)} the first ${v} leaves ${a} at ${fmt(openT[0])} and the last at ${fmt(openT.at(-1))}.` : '';
+  const where = a === b ? `${a} loop` : `${a} to ${b}`;
+  const openSpan = openT.length ? `${cap(dayPhrase(openDay.label))}: ${openT[0] === openT.at(-1) ? `${v} at ${fmt(openT[0])}` : `first ${fmt(openT[0])}, last ${fmt(openT.at(-1))}`}.` : '';
+  const hasWeekend = p.days.some((d) => d.days.some((n) => n === 5 || n === 6));
+  const features = `All stops, departure times today${hasWeekend ? ', weekend service' : ''} & printable ${word} PDF.`;
   const description = fit(160,
-    `${h1}. ${openSentence} See the whole day by hour at any stop, how often it runs and every stop on the route.`,
-    `${h1}. ${openSentence} The whole day by hour at any stop.`,
-    `${h1}. ${openSentence}`,
-    `${p.short || core} ${mode} ${word}. ${openSentence}`,
-    `${openSentence} The whole day by hour at any stop.`);
+    `${op} ${ref} ${mode} ${word} (${city}). ${openSpan} ${features}`,
+    `${ref} ${mode} ${word} (${city}): ${where}. ${openSpan} ${features}`,
+    `${op} Route ${ref} ${mode} ${word}: ${where}. Full schedule, all stops & printable PDF.`,
+    `${ref} ${mode} ${word}, ${city}. ${openSpan} Complete schedule & stops.`);
 
   /* ---------- how often ---------- */
   const busy = busiestDay(main, p.days);
@@ -78,6 +106,21 @@ export function routeView(p) {
     const last = [...d.stops].reverse().find((s) => s.min != null);
     return last?.min ? span(last.min) : null;
   });
+  const dayNames = p.days.map((d) => dayPhrase(d.label));
+  const fallbackDays = dayNames.length > 1 ? `${dayNames.slice(0, -1).join(', ')} and ${dayNames.at(-1)}` : dayNames[0];
+  const serviceDayNums = new Set(p.days.flatMap((d) => d.days));
+  const allWeekdays = [0, 1, 2, 3, 4].every((d) => serviceDayNums.has(d));
+  const serviceDays = serviceDayNums.size === 7 ? 'every day'
+    : allWeekdays && serviceDayNums.size === 5 ? 'weekdays'
+      : allWeekdays && serviceDayNums.size === 6 && serviceDayNums.has(5) ? 'weekdays and Saturdays'
+        : allWeekdays && serviceDayNums.size === 6 && serviceDayNums.has(6) ? 'weekdays and Sundays'
+          : fallbackDays;
+  const facts = [
+    serviceDays ? `Runs ${serviceDays}` : null,
+    `${main.stops.length} stops toward ${b}`,
+    ends[0] ? `${cap(ends[0])} end to end` : null,
+    `Timetable refreshed ${shortDate(sys.builtOn)}`,
+  ].filter(Boolean);
 
   /* ---------- when to watch out ---------- */
   const watch = [];
@@ -130,5 +173,5 @@ export function routeView(p) {
   if (holidays.length) faq.push({ q: `Does the ${ref} run on public holidays?`, a: holidays.slice(0, 4).map((h) => `${h.when}: ${h.what}.`).join(' ') });
   faq.push({ q: 'Are these live times?', a: `No. They are ${sys.name}’s published ${word}, and a ${v} can run early or late. Check ${sys.name} for disruptions.` });
 
-  return { sys, word, mode, v, vs, label, h1, title, description, lede: [lead, openSentence].filter(Boolean).join(' '), a, b, ref, openDay, openT, busy, dirCols, freq, otherDays, daily, ends, watch: [...new Set(watch)], bars, barsAria, holidays, faq };
+  return { sys, word, mode, v, vs, label, h1, title, description, lede: [lead, openSentence].filter(Boolean).join(' '), a, b, ref, officialUrl, facts, openDay, openT, busy, dirCols, freq, otherDays, daily, ends, watch: [...new Set(watch)], bars, barsAria, holidays, faq };
 }

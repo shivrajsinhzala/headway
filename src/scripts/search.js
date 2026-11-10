@@ -38,7 +38,7 @@ function render(raw) {
 const initial = new URLSearchParams(window.location.search).get('q') || '';
 if (input) {
   input.value = initial;
-  input.focus();
+  if (window.matchMedia('(pointer: fine)').matches) input.focus();
   input.addEventListener('input', () => render(input.value));
   input.form?.addEventListener('submit', (e) => { e.preventDefault(); render(input.value); });
 }
