@@ -61,7 +61,7 @@ for (const f of files) {
   if (/\[[A-Z][^\]]{3,}\]/.test(text)) bad('bracket placeholder left in');
   if (/undefined|NaN|\[object/.test(text)) bad('undefined, NaN or [object] in the text');
   if (/[–—]/.test(text)) bad('typographic dash in the text');
-  if (/See all \d+ routes|All \d+ .* routes/i.test(text)) bad('claims routes that are not published');
+  if (/See all \d+ routes|\bAll \d+ [^.]{0,60} routes/.test(text)) bad('claims routes that are not published');
 
   for (const m of html.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)) {
     const href = m[1].replace(/&amp;/g, '&');

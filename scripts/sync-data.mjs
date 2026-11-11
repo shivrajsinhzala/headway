@@ -7,7 +7,7 @@
  * Output: src/data/site.json (everything the page templates read), public/data/<cc>/<sys>/<route>.json
  * (every stop's times, fetched only when a rider changes stop), data/lastmod.json (real lastmod).
  *
- * PAGES sets the total, network pages included. Ramp it only once most pages are indexed.
+ * PAGES sets the total, network pages included (600 since 11 Nov 2026). Ramp it only once most pages are indexed.
  */
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -16,7 +16,7 @@ import path from 'node:path';
 
 const SRC = process.env.TRANSIT_DIR || path.join(os.homedir(), 'transit-timetables');
 const ROOT = path.resolve(import.meta.dirname, '..');
-const LIMIT = Number(process.env.PAGES || 100);
+const LIMIT = Number(process.env.PAGES || 600);
 const TODAY = process.env.TODAY || new Date().toISOString().slice(0, 10);
 
 // Search demand leans to routes, but a site of nothing else misses "a to b" searches.
@@ -119,6 +119,46 @@ for (const r of ranked) {
   networks.add(r.key);
   picked.push({ ...e, key: r.key, peak: { clicks: r.clicks, impr: r.impr, pos: Number(r.peak_pos) || null } });
   counts[r.type]++;
+}
+
+/* ---------- second pass: busy routes with no search history yet ----------
+ * Search Console only knows pages Stopwatch already ranked, which runs out at about 136 routes.
+ * The rest of the route allowance goes to the routes riders use most: trains and trams first
+ * (few lines, heavy searching), then buses by trips on their busiest day. Same quality bar. */
+const ALL_KEYS = ['au', 'us'].flatMap((cc) => {
+  const dir = path.join(SRC, 'src/data/systems', cc);
+  return fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => `${cc}/${f.slice(0, -5)}`) : [];
+}).filter((k) => IN_SCOPE.test(k));
+/** "Ferny Grove - Beenleigh" and "Beenleigh - Ferny Grove" share a key; names without two ends have none. */
+function endsKey(key, name) {
+  const ends = clean(name).replace(/\s+via\s+.*$/i, '').split(/\s+(?:-|to)\s+/i).map((s) => s.toLowerCase());
+  return ends.length === 2 && ends[0] !== ends[1] ? `${key}|${[...ends].sort().join('|')}` : null;
+}
+const isRail = (t) => [0, 1, 2].includes(Number(t)) || (Number(t) >= 100 && Number(t) < 200) || (Number(t) >= 900 && Number(t) < 1000);
+const busy = [];
+for (const key of ALL_KEYS) {
+  const n = network(key);
+  if (!n) continue;
+  for (const route of n.system.routes) {
+    const url = `https://transit.shivrajsinh.in/${key}/${route.slug}`;
+    if (seen.has(url) || n.minor.has(route.slug) || busiest(route) < MIN_ROUTE_TRIPS) continue;
+    // A route with no search history has to earn its page: a service most of the week, not a part-week shuttle.
+    if (new Set((route.days || []).flatMap((d) => d.days)).size < 5) continue;
+    busy.push({ key, slug: route.slug, rail: isRail(route.type), trips: busiest(route), ends: endsKey(key, route.name) });
+  }
+}
+busy.sort((a, b) => b.rail - a.rail || b.trips - a.trips);
+// Brisbane lists each train pattern twice (BNFG Beenleigh - Ferny Grove, FGBN back again): one page per pair.
+const pairTaken = new Set(picked.filter((p) => p.type === 'route').map((p) => endsKey(p.key, network(p.key).routes.get(p.slug)?.name)));
+for (const x of busy) {
+  if (counts.route >= CAPS.route) break;
+  if (x.ends && pairTaken.has(x.ends)) continue;
+  if (x.ends) pairTaken.add(x.ends);
+  const addsNetwork = !networks.has(x.key);
+  if (picked.length + networks.size + (addsNetwork ? 1 : 0) + 1 > LIMIT) break;
+  networks.add(x.key);
+  picked.push({ type: 'route', slug: x.slug, key: x.key, peak: { clicks: 0, impr: 0, pos: null } });
+  counts.route++;
 }
 
 /* ---------- shapes ---------- */
@@ -280,7 +320,8 @@ for (const p of picked) {
     fs.writeFileSync(outFile, blob);
     report.dataBytes += blob.length;
     pages.push({
-      type: 'route', key: p.key, url: `${base}/${r.slug}`, slug: r.slug, short: clean(r.short), name: clean(r.name), routeType: r.type,
+      type: 'route', key: p.key, url: `${base}/${r.slug}`, slug: r.slug, short: /^[A-Z]{3,}$/.test(clean(r.short)) ? '' : clean(r.short), // feed codes (SEAFRD, FGBN) are not route numbers riders know
+      name: clean(r.name), routeType: r.type,
       label: r.label ? clean(r.label) : '', color: r.color || null, textColor: r.textColor || null, days: r.days, exceptions: liveExceptions(r.exceptions),
       dirs, dataUrl, shape: plate(p.key, r.slug), peak: p.peak,
     });
