@@ -1,6 +1,6 @@
 /** A route page's words and figures, all computed from its timetable. Nothing here is typed by hand. */
 import { fmt, median, span, hourLabel } from './time.js';
-import { systems, tWord, modeFor, vehicleFor, pluralOf, routeLabel, place, toward, dayPhrase, cityOf, fit, shortDate, cap } from './site.js';
+import { systems, builtAt, tWord, modeFor, vehicleFor, pluralOf, routeLabel, place, toward, dayPhrase, cityOf, fit, shortDate, cap } from './site.js';
 
 const PERIODS = [
   ['Before 7am', 0, 420],
@@ -50,26 +50,25 @@ export function routeView(p) {
   const h1 = p.short
     ? hasEnds ? `${p.short} ${mode} ${word}: ${core}` : `${p.short} ${core} ${mode} ${word}`
     : `${core} ${mode} ${word}`;
-  // Riders scan a result page for the operator and city; Stopwatch's best-clicked titles lead
-  // with them ("Phoenix Valley Metro Bus Route 7 Schedule: 7th St"). Drop "bus" before the
-  // city before dropping the city: "272 timetable: … (Brisbane)" still matches "272 bus timetable".
+  // Most searches are a bare number ("110 bus timetable") from riders all over the world, so the
+  // city leads: a rider in Adelaide sees "Adelaide 110 …" and knows it is theirs before reading
+  // further (Stopwatch's best-clicked titles led with operator and city too). Endpoints confirm the
+  // route; when they don't fit, the timetable's month and "first & last" say it is current and useful.
   const op = sys.name;
-  const title = hasEnds
+  const V = cap(v);
+  const asOf = new Date(`${builtAt}T00:00:00Z`).toLocaleDateString('en-AU', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+  const who = sys.cc === 'us' ? `${op} Route ${ref}` : `${city} ${ref}`;
+  const named = new RegExp(`^${city.replace(/[/]/g, '\\/')}\\b`, 'i').test(core) ? core : `${city} ${core}`;
+  const title = p.short
     ? fit(60,
-        `${ref} ${cap(mode)} ${cap(word)}: ${core} (${city})`,
-        `${ref} ${cap(mode)} ${cap(word)} (${city}) | PDF`,
-        `${ref} ${cap(word)}: ${core} (${city})`,
-        `${ref} ${cap(mode)} ${cap(word)}: ${core}`)
-    : p.short
-      ? fit(60,
-          `${ref} ${cap(mode)} ${cap(word)}: ${core} (${city})`,
-          `${op} Route ${ref} ${cap(word)}: ${core}`,
-          `${ref} ${cap(mode)} ${cap(word)} (${city}) | PDF`,
-          `${ref} ${cap(mode)} ${cap(word)}: ${core}`)
-      : fit(60,
-          `${core} ${cap(mode)} ${cap(word)} (${city}) | PDF`,
-          `${core} ${cap(mode)} ${cap(word)} (${op})`,
-          `${core} ${cap(mode)} ${cap(word)}`);
+        `${who} ${cap(mode)} ${cap(word)}: ${core}`,
+        `${who} ${cap(mode)} ${cap(word)} (${asOf}): First & Last ${V}`,
+        `${who} ${cap(mode)} ${cap(word)}: First & Last ${V}`,
+        `${who} ${cap(mode)} ${cap(word)}`)
+    : fit(60,
+        `${named} ${cap(mode)} ${cap(word)} (${asOf})`,
+        `${named} ${cap(mode)} ${cap(word)}`,
+        `${core} ${cap(mode)} ${cap(word)}`);
 
   /* ---------- the opening answer ---------- */
   const a = place(main.firstName), b = place(main.lastName);
