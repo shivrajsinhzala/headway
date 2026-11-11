@@ -7,6 +7,8 @@ import { SITE, inNetwork, systems } from '../lib/site.js';
 
 const { title, description, path = '', noindex = false, jsonld = [], operator = '', nav = false, ogType = 'website', modified, pageType = 'WebPage' } = Astro.props;
 const canonical = `${SITE}${path === '/' ? '/' : path}`;
+// Australian pages are en-AU and Phoenix en-US: search engines and assistants use it to match a reader's region.
+const lang = path.startsWith('/au') ? 'en-AU' : path.startsWith('/us') ? 'en-US' : 'en';
 // The brand suffix only when the whole thing still fits a result line (~60 chars): the operator
 // and city at the end of a route title are what a rider scans for, and " | Headway" must not cut them off.
 const fullTitle = /headway/i.test(title) ? title : (title.length + 11 <= 60 ? `${title} | Headway` : title);
@@ -16,7 +18,7 @@ const ORG_ID = `${SITE}/#organization`;
 const SITE_ID = `${SITE}/#website`;
 const pageLd = {
   '@context': 'https://schema.org', '@type': pageType, '@id': `${canonical}#webpage`,
-  url: canonical, name: fullTitle, description, inLanguage: 'en',
+  url: canonical, name: fullTitle, description, inLanguage: lang,
   isPartOf: { '@id': SITE_ID }, publisher: { '@id': ORG_ID },
   ...(modified ? { dateModified: modified } : {}),
 };
@@ -28,7 +30,7 @@ const schema = [pageLd, ...jsonld, ...(path === '/' || path === '/about' ? entit
 const NAV = [['Brisbane', 'au/brisbane'], ['Adelaide', 'au/adelaide'], ['Melbourne', 'au/melbourne-buses'], ['Victoria', 'au/vline-coaches'], ['Phoenix', 'us/phoenix']].filter(([, k]) => systems[k] && inNetwork(k).length);
 ---
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -60,7 +62,7 @@ const NAV = [['Brisbane', 'au/brisbane'], ['Adelaide', 'au/adelaide'], ['Melbour
 <body>
   <a class="skip" href="#content">Skip to the times</a>
   <div class="band">
-    <header class="container top">
+    <header class="container top google-anno-skip">
       <a class="brand" href="/" aria-label="Headway home"><Logo size={32} /><span>Headway</span></a>
       {nav ? (
         <nav class="top-nav" aria-label="Networks">{NAV.map(([name, k]) => <a href={`/${k}`}>{name}</a>)}</nav>
@@ -78,9 +80,17 @@ const NAV = [['Brisbane', 'au/brisbane'], ['Adelaide', 'au/adelaide'], ['Melbour
   </div>
   <main id="content" class="container page"><slot /></main>
   <slot name="after" />
-  <footer class="container foot">
+  <footer class="container foot google-anno-skip">
     <p>Headway is independent and not affiliated with {operator || 'any operator'}. Times are published schedules, not live vehicle positions.</p>
-    <nav aria-label="About"><a href="/about">About</a><a href="/about#sources">Sources</a><a href="/privacy">Privacy</a><a href="https://transit.shivrajsinh.in" target="_blank" rel="noopener">Stopwatch Timetables</a></nav>
+    <nav aria-label="About">
+      <a href="/about">About</a>
+      <a href="/about#sources">Sources</a>
+      <a href="/privacy">Privacy</a>
+      <a href="https://transit.shivrajsinh.in" target="_blank" rel="noopener">Stopwatch Timetables</a>
+      <a href="https://launchit.fast" target="_blank" rel="noopener" class="launchit-badge" style="display:inline-flex;align-items:center;vertical-align:middle;margin-left:8px;">
+        <img src="https://launchit.fast/img/launching.svg" alt="Featured on LaunchIt" height="24" />
+      </a>
+    </nav>
   </footer>
   {adsOn && <script is:inline>
     (() => {

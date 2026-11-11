@@ -50,7 +50,8 @@ for (const f of files) {
   if (!title) bad('no title');
   if (!desc) bad('no description');
   for (const field of ['twitter:title', 'twitter:description', 'twitter:image']) if (!html.includes(`<meta name="${field}"`)) bad(`missing ${field}`);
-  if (html.includes('"@type":"FAQPage"')) bad('obsolete FAQPage schema');
+  // FAQPage JSON-LD is allowed again (12 Nov 2026): Google shows no rich result for it, but it mirrors the
+  // visible questions for answer engines. It must only ever repeat what the page shows.
   if (desc && desc.length > 170) bad(`description ${desc.length} chars`);
   if (title && title.length > 75) bad(`title ${title.length} chars: ${title}`);
   if ((html.match(/<h1[\s>]/g) || []).length !== 1) bad('not exactly one h1');

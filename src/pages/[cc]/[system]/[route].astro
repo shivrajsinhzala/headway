@@ -6,7 +6,7 @@ import Crumbs from '../../../components/Crumbs.astro';
 import Faq from '../../../components/Faq.astro';
 import Plate from '../../../components/Plate.astro';
 import Source from '../../../components/Source.astro';
-import { SITE, pages, byUrl, crumbsLd, place, toward, dayPhrase, routeLabel, cap } from '../../../lib/site.js';
+import { SITE, pages, byUrl, crumbsLd, place, toward, dayPhrase, routeLabel, cap, faqLd } from '../../../lib/site.js';
 import { routeView } from '../../../lib/route.js';
 import { fmt, gridHtml, span } from '../../../lib/time.js';
 
@@ -41,20 +41,20 @@ const datasetLd = {
   distribution: { '@type': 'DataDownload', contentUrl: `${SITE}${p.dataUrl}`, encodingFormat: 'application/json' },
 };
 ---
-<Base title={x.title} description={x.description} path={p.url} modified={p.lastmod} operator={sys.name} jsonld={[crumbsLd(crumbs), datasetLd]}>
+<Base title={x.title} description={x.description} path={p.url} modified={p.lastmod} operator={sys.name} jsonld={[crumbsLd(crumbs), datasetLd, ...(x.faq?.length ? [faqLd(x.faq)] : [])]}>
   <section slot="hero" class="container hero route-hero">
     <div class="hero-text">
       <Crumbs items={crumbs} />
       <h1>{x.h1}</h1>
       <p class="lede">{x.lede}</p>
       <p class="section-note route-facts">{x.facts.join(' · ')}</p>
-      <nav class="section-links" aria-label="On this route page">
+      <nav class="section-links google-anno-skip" aria-label="On this route page">
         <a href="#times">Timetable</a><a href="#frequency">Frequency</a><a href="#gaps">Long gaps</a><a href="#stops">Stops</a>
         {x.officialUrl && <a href={x.officialUrl}>Official route, alerts and fares</a>}
       </nav>
     </div>
     <div class:list={['hero-side', !p.shape && 'solo']}>
-      <div class="card-next" data-next aria-live="polite">
+      <div class="card-next google-anno-skip" data-next aria-live="polite">
         <p class="next-label" data-next-label>First from {x.a}, {dayPhrase(x.openDay.label)}</p>
         <p class="next-time" data-next-time>{x.openT.length ? fmt(x.openT[0]) : ''}</p>
         <p class="next-more" data-next-more>{x.openT.length ? `last ${fmt(x.openT.at(-1))}` : ''}</p>
@@ -74,6 +74,9 @@ const datasetLd = {
       <Plate shape={p.shape} label={`The real path of ${x.label}, from ${x.a} to ${x.b}. The coral dot marks ${x.a}.`} />
     </div>
   </section>
+
+  <!-- First ad: the hero above already answers "when is the next one", so this never delays the answer. -->
+  <Ad kind="lead" unit="9765370376" />
 
   <div class="times-layout" id="times">
     <div class="times-main">
@@ -105,11 +108,11 @@ const datasetLd = {
         ))}
       </div>
     </div>
-    <Ad kind="rail" slot="1697297769" />
+    <Ad kind="rail" unit="1697297769" />
   </div>
 
-  <!-- Primary In-Content Ad right after the timetable for high viewability -->
-  <Ad kind="mid" slot="9765370376" />
+  <!-- In-content ad right after the timetable. -->
+  <Ad kind="mid" unit="1697297769" />
 
   <section class="two">
     <div id="frequency">
@@ -170,6 +173,8 @@ const datasetLd = {
       })}
     </div>
   </section>
+
+  <Ad unit="9765370376" />
 
   <Faq faq={x.faq} title={`Questions about the ${x.ref}`} />
 

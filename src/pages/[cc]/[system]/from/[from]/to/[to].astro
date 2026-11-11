@@ -6,7 +6,7 @@ import Crumbs from '../../../../../../components/Crumbs.astro';
 import Faq from '../../../../../../components/Faq.astro';
 import Plate from '../../../../../../components/Plate.astro';
 import Source from '../../../../../../components/Source.astro';
-import { pages, byUrl, systems, crumbsLd, tWord, modeFor, vehicleFor, pluralOf, fit, dayPhrase, cap, routeLabel, shortDate, median } from '../../../../../../lib/site.js';
+import { pages, byUrl, systems, crumbsLd, tWord, modeFor, vehicleFor, pluralOf, fit, dayPhrase, cap, routeLabel, shortDate, median, faqLd } from '../../../../../../lib/site.js';
 import { fmt, span, gridHtml } from '../../../../../../lib/time.js';
 
 export function getStaticPaths() {
@@ -83,7 +83,7 @@ const clientData = {
 const reverse = p.reverse && byUrl.get(p.reverse);
 const others = pages.filter((o) => o.type === 'journey' && o.key === p.key && o !== p && o !== reverse).sort((a, b) => b.peak.impr - a.peak.impr).slice(0, 6);
 ---
-<Base title={title} description={description} path={p.url} modified={p.lastmod} operator={sys.name} jsonld={[crumbsLd(crumbs)]}>
+<Base title={title} description={description} path={p.url} modified={p.lastmod} operator={sys.name} jsonld={[crumbsLd(crumbs), ...(faq?.length ? [faqLd(faq)] : [])]}>
   <section slot="hero" class="container hero">
     <div class="hero-text">
       <Crumbs items={crumbs} />
@@ -172,6 +172,8 @@ const others = pages.filter((o) => o.type === 'journey' && o.key === p.key && o 
       </table>
     </section>
   )}
+
+  <Ad unit="9765370376" />
 
   <Faq faq={faq} title="Questions about this trip" />
 

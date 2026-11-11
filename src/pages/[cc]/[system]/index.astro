@@ -21,7 +21,7 @@ const mode = routes[0] ? modeFor(routes[0].routeType, sys) : 'transit';
 const lede = `${sys.area}.`.replace(/^\./, '');
 const covers = `Headway covers ${routes.length} of ${sys.name}’s ${sys.totalRoutes} routes so far, starting with the ones people look up most. Each page has the whole day by hour at any stop.`;
 const title = fit(60, `${h1}: routes, stops and times`, h1);
-const description = fit(160, `${h1}: full day by hour, first and last ${mode} times and every stop for the routes people look up most in ${sys.area}.`, `${h1}: first and last times and every stop for the most looked-up routes.`, h1);
+const description = fit(160, `${h1}: full day by hour, first and last ${mode} times and every stop for the routes people look up most in ${sys.area}.`, `${h1}: the whole day by hour, first and last ${mode} times and every stop for the ${routes.length} routes people look up most.`, `${h1}: first and last times and every stop for the most looked-up routes.`, h1);
 const crumbs = [{ name: 'Home', href: '/' }, { name: sys.name }];
 ---
 <Base title={title} description={description} path={sys.url} modified={sys.lastmod} pageType="CollectionPage" operator={sys.name} noindex={!hubIndexed(sys.key)} jsonld={[crumbsLd(crumbs)]}>
@@ -38,10 +38,13 @@ const crumbs = [{ name: 'Home', href: '/' }, { name: sys.name }];
     </div>
   </section>
 
+  <!-- The route list below runs to thousands of pixels on a phone, so the first ad sits above it. -->
+  <Ad kind="lead" unit="9765370376" />
+
   {routes.length > 0 && (
     <section>
       <h2 class="section-title">Routes people look up most</h2>
-      <table class="data">
+      <table class="data route-table">
         <thead><tr><th scope="col">Route</th><th scope="col">Runs between</th><th scope="col" class="r">First weekday</th><th scope="col" class="r">Last weekday</th></tr></thead>
         <tbody>
           {routes.map((r) => {

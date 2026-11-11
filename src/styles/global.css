@@ -15,6 +15,8 @@ button:disabled, select:disabled, input:disabled { opacity: 0.55; cursor: not-al
 .fig { margin: 0; }
 
 body { line-height: 1.55; }
+/* A wide ad or table must never make the whole page scroll sideways. */
+html, body { overflow-x: clip; }
 a { color: var(--color-accent); }
 a:hover { color: var(--color-ink-2); }
 th { font-weight: 500; }
@@ -79,6 +81,8 @@ ol, ul { margin: 0; padding: 0; list-style: none; }
 .page > :first-child { margin-top: 0; }
 .section-title { font-weight: 600; font-size: var(--text-section); letter-spacing: -0.035em; line-height: 1.1; }
 .section-note { margin-top: var(--space-2xs); color: var(--color-muted); }
+/* On the blue band the muted grey is unreadable (1.3:1): use the band's own ink. */
+.band .section-note { color: var(--color-accent-ink); opacity: 0.86; }
 .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr)); gap: var(--space-xl) var(--space-2xl); align-items: start; }
 .two > * { min-width: 0; }
 
@@ -118,8 +122,9 @@ ol, ul { margin: 0; padding: 0; list-style: none; }
 /* ---------- ads ---------- */
 .ad { margin-block: var(--section-gap-s); text-align: center; min-width: 0; max-width: 100%; }
 .ad-label { display: block; font-size: var(--text-xs); color: var(--color-muted); margin-bottom: var(--space-2xs); }
-.ad ins { display: block; min-height: 250px; max-width: 100%; background: var(--color-paper-2); border-radius: var(--space-xs); }
-.ad ins[data-ad-status="filled"] { background: transparent; }
+/* No grey box while an ad loads or when none comes: the reserved height alone stops the page jumping. */
+.ad ins { display: block; min-height: 250px; max-width: 100%; }
+.ad-lead { margin-block: 0 var(--section-gap-s); }
 ins.adsbygoogle[data-ad-status="unfilled"] { display: none !important; }
 .ad:has(ins[data-ad-status="unfilled"]) { display: none; }
 .page > .ad { margin-block: var(--section-gap) 0; }
@@ -273,6 +278,14 @@ a.badge:hover { color: var(--badge-ink, var(--color-accent-ink)); text-decoratio
   .sheets { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 640px) {
+  /* The route table was 497px wide on a 390px phone: let its headings wrap and tighten the cells. */
+  .data thead th { white-space: normal; }
+  .data th, .data td { padding-right: var(--space-xs); }
+  .data .r { padding-left: var(--space-xs); }
+  .route-table { width: 100%; table-layout: fixed; }
+  .route-table th:first-child { width: 4.25rem; }
+  .route-table th.r { width: 4.5rem; }
+  .route-table td { overflow-wrap: anywhere; }
   :root { --text-md: 1.0625rem; --gutter: 16px; --section-gap: 44px; --section-gap-s: 28px; --section-gap-l: 44px; }
   .top-search { flex: 1 1 100%; }
   .hero { padding-block: var(--space-xs) var(--space-lg); gap: var(--space-md); }

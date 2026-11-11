@@ -5,7 +5,7 @@ import Badge from '../../../../components/Badge.astro';
 import Crumbs from '../../../../components/Crumbs.astro';
 import Faq from '../../../../components/Faq.astro';
 import Source from '../../../../components/Source.astro';
-import { pages, byUrl, systems, crumbsLd, tWord, place, signText, modeFor, vehicleFor, pluralOf, fit, dayPhrase, cap } from '../../../../lib/site.js';
+import { pages, byUrl, systems, crumbsLd, tWord, place, signText, modeFor, vehicleFor, pluralOf, fit, dayPhrase, cap, faqLd } from '../../../../lib/site.js';
 import { fmt } from '../../../../lib/time.js';
 
 export function getStaticPaths() {
@@ -42,6 +42,9 @@ const lede = [`${cap(shortList.length > 1 ? 'routes' : 'route')} ${listText(shor
 const description = fit(160,
   `${h1}, stop ${p.code}. ${lede} See first and last times for every route and the next departures.`,
   `${h1}, stop ${p.code}. ${lede}`,
+  // A busy stop's route list overflows the two above: say how many routes and the day's span instead.
+  `${h1}, stop ${p.code}: ${shortList.length} routes stop here.${week.length ? ` On weekdays the first ${v} leaves at ${fmt(week[0])} and the last at ${fmt(week.at(-1))}.` : ''} See every departure and the next ones.`,
+  `${h1}, stop ${p.code}: ${shortList.length} routes stop here.${week.length ? ` Weekdays ${fmt(week[0])} to ${fmt(week.at(-1))}.` : ''} See every departure.`,
   `${h1}, stop ${p.code}.`);
 const crumbs = [{ name: 'Home', href: '/' }, { name: sys.name, href: sys.url }, { name: `Stop ${p.code}` }];
 
@@ -66,7 +69,7 @@ const clientData = {
 const openDay = routes[0].days.find((d) => routes[0].times[d.key]?.length) || routes[0].days[0];
 const firsts = rows.filter((r) => r.wk).slice(0, 6);
 ---
-<Base title={title} description={description} path={p.url} modified={p.lastmod} operator={sys.name} jsonld={[crumbsLd(crumbs)]}>
+<Base title={title} description={description} path={p.url} modified={p.lastmod} operator={sys.name} jsonld={[crumbsLd(crumbs), ...(faq?.length ? [faqLd(faq)] : [])]}>
   <section slot="hero" class="container hero">
     <div class="hero-text">
       <Crumbs items={crumbs} />
@@ -112,6 +115,8 @@ const firsts = rows.filter((r) => r.wk).slice(0, 6);
       <p>Stop {p.code}, {p.name}. <a href={`https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lon}#map=18/${p.lat}/${p.lon}`} rel="nofollow">Open the map</a></p>
     </div>
   </section>
+
+  <Ad unit="9765370376" />
 
   <Faq faq={faq} title={`Questions about ${name}`} />
 

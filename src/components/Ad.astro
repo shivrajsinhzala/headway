@@ -1,11 +1,15 @@
 ---
-/** A placed AdSense unit, labelled and with its space reserved so the page does not jump. */
+/**
+ * A placed AdSense unit, labelled and with its space reserved so the page does not jump.
+ * The ad unit id is `unit`, never `slot`: on a direct child of a layout Astro reads `slot="…"` as a
+ * named slot and silently drops the whole component (the in-content ad was missing for that reason).
+ */
 interface Props {
-  slot?: string;
-  kind?: 'wide' | 'rail' | 'mid';
+  unit?: string;
+  kind?: 'wide' | 'rail' | 'mid' | 'lead';
 }
 
-const { slot = '1697297769', kind = 'wide' } = Astro.props;
+const { unit = '1697297769', kind = 'wide' } = Astro.props;
 const CLIENT = 'ca-pub-7164999486301748';
 ---
 <aside class:list={['ad', `ad-${kind}`]} aria-label="Advertisement">
@@ -14,7 +18,7 @@ const CLIENT = 'ca-pub-7164999486301748';
     class="adsbygoogle"
     style="display:block"
     data-ad-client={CLIENT}
-    data-ad-slot={slot}
+    data-ad-slot={unit}
     data-ad-format={kind === 'rail' ? 'vertical' : 'auto'}
     data-full-width-responsive={kind === 'rail' ? 'false' : 'true'}
   ></ins>
