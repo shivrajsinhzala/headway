@@ -265,7 +265,7 @@ a.badge:hover { color: var(--badge-ink, var(--color-accent-ink)); text-decoratio
 
 /* ---------- wide: the rail beside the timetable ---------- */
 @media (min-width: 1180px) {
-  .times-layout { grid-template-columns: minmax(0, 1fr) 300px; }
+  .times-layout:has(.ad-rail) { grid-template-columns: minmax(0, 1fr) 300px; }
   .times-layout:has(.ad-rail ins[data-ad-status="unfilled"]) { grid-template-columns: minmax(0, 1fr); }
   .ad-rail { display: block; position: sticky; top: var(--space-md); margin: 0; }
   .ad-rail ins { min-height: 600px; }
