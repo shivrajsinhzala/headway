@@ -9,7 +9,10 @@ interface Props {
   kind?: 'wide' | 'rail' | 'mid' | 'lead';
 }
 
-const { unit = '1697297769', kind = 'wide' } = Astro.props;
+// Headway's own units (12 Nov 2026): Headway In-content 8619321960 sits after the timetable;
+// Headway Bottom 7026717897 everywhere else. Its reports no longer mix with Stopwatch's.
+const BOTTOM = '7026717897';
+const { unit = BOTTOM, kind = 'wide' } = Astro.props;
 const CLIENT = 'ca-pub-7164999486301748';
 ---
 <aside class:list={['ad', `ad-${kind}`]} aria-label="Advertisement">

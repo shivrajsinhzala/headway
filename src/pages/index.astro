@@ -20,6 +20,8 @@ const rows = Array.from({ length: 7 }, (_, i) => {
 const sampleSys = systems[sample.key];
 const networks = Object.values(systems).filter((s) => inNetwork(s.key).length).sort((a, b) => inNetwork(b.key).length - inNetwork(a.key).length);
 const top = routes.slice(0, 10);
+// The home page is where most links to Headway land; these pass that on to each city's main routes.
+const byCity = networks.map((sys) => ({ sys, list: routes.filter((r) => r.key === sys.key).slice(0, 12) })).filter((x) => x.list.length);
 const title = 'Headway: Australian bus, tram and train timetables';
 const description = 'Australian bus, tram and train timetables at your stop: first and last services, full days and printable schedules from official data. Phoenix included.';
 ---
@@ -72,6 +74,18 @@ const description = 'Australian bus, tram and train timetables at your stop: fir
           })}
         </tbody>
       </table>
+    </div>
+  </section>
+
+  <section id="by-city">
+    <h2 class="section-title">Timetables by city</h2>
+    <div class="two">
+      {byCity.map(({ sys, list }) => (
+        <div>
+          <h3><a href={sys.url}>{sys.name}</a></h3>
+          <div class="chips">{list.map((r) => <a class="chip" href={r.url}>{r.short ? `${cityOf(sys)} ${r.short}` : r.name.replace(/\s+-\s+/g, ' to ').replace(/\s+via\s+.*$/i, '')}</a>)}</div>
+        </div>
+      ))}
     </div>
   </section>
 

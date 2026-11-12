@@ -47,9 +47,12 @@ export function routeView(p) {
   const via = /\svia\s+(.+)$/i.exec(p.name)?.[1];
   const hasEnds = / to /.test(core);
   const ref = p.short || label;
+  // The heading names the place too: "110 bus timetable" alone could be any city's 110.
+  const where0 = sys.cc === 'us' ? sys.name : city;
+  const inCity = (s) => (new RegExp(`^${where0.replace(/[/]/g, '\\/')}\\b`, 'i').test(s) ? s : `${where0} ${s}`);
   const h1 = p.short
-    ? hasEnds ? `${p.short} ${mode} ${word}: ${core}` : `${p.short} ${core} ${mode} ${word}`
-    : `${core} ${mode} ${word}`;
+    ? hasEnds ? `${where0} ${p.short} ${mode} ${word}: ${core}` : `${where0} ${p.short} ${core} ${mode} ${word}`
+    : inCity(`${core} ${mode} ${word}`);
   // Most searches are a bare number ("110 bus timetable") from riders all over the world, so the
   // city leads: a rider in Adelaide sees "Adelaide 110 …" and knows it is theirs before reading
   // further (Stopwatch's best-clicked titles led with operator and city too). Endpoints confirm the
@@ -83,7 +86,7 @@ export function routeView(p) {
   const hasWeekend = p.days.some((d) => d.days.some((n) => n === 5 || n === 6));
   const features = `All stops, departure times today${hasWeekend ? ', weekend service' : ''} & printable ${word} PDF.`;
   const description = fit(160,
-    `${op} ${ref} ${mode} ${word} (${city}). ${openSpan} ${features}`,
+    `${op} ${ref} ${mode} ${word}${op.includes(city) ? "" : ` (${city})`}. ${openSpan} ${features}`,
     `${ref} ${mode} ${word} (${city}): ${where}. ${openSpan} ${features}`,
     `${op} Route ${ref} ${mode} ${word}: ${where}. Full schedule, all stops & printable PDF.`,
     `${ref} ${mode} ${word}, ${city}. ${openSpan} Complete schedule & stops.`);
